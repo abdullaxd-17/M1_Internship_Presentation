@@ -1,1131 +1,962 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="strict-origin-when-cross-origin" name="referrer"/>
 <title>LoRa-Based Telemetry System — Solar-Powered EPS &amp; THC Board · CSUG</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" />
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
 </head>
 <body>
 <!-- monoline icon sprite (engineered line-icons, inherit color + size) -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<marker id="pf-arrow" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0.5,1 L9,5 L0.5,9 Z" fill="context-stroke"/></marker>
-<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.4M12 19.2v2.4M2.4 12h2.4M19.2 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></symbol>
-<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2.5 4.8 13.4h6.1l-1.1 8.1 8.4-11h-6.1z"/></symbol>
-<symbol id="i-thermo" viewBox="0 0 24 24"><path d="M10 13.6V5a2 2 0 0 1 4 0v8.6a4 4 0 1 1-4 0z"/><path d="M12 8.5v6.4"/></symbol>
-<symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.4"/><rect x="10.4" y="10.4" width="3.2" height="3.2"/><path d="M9.5 4v2.2M14.5 4v2.2M9.5 17.8V20M14.5 17.8V20M4 9.5h2.2M4 14.5h2.2M17.8 9.5H20M17.8 14.5H20"/></symbol>
-<symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.8"/><path d="M8.6 8.6a4.8 4.8 0 0 0 0 6.8M15.4 8.6a4.8 4.8 0 0 1 0 6.8M6.1 6.1a8.3 8.3 0 0 0 0 11.8M17.9 6.1a8.3 8.3 0 0 1 0 11.8"/></symbol>
-<symbol id="i-antenna" viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.9"/><path d="M12 8v12M8.5 20h7M8 9.6a6 6 0 0 1 0-7.2M16 9.6a6 6 0 0 0 0-7.2"/></symbol>
-<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M9 20.5h6M12 16.5v4M7 12l3-3 2.2 2.2L16 7"/></symbol>
-<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.2 21 8l-9 4.8L3 8z"/><path d="M3.4 13 12 17.6 20.6 13"/></symbol>
-<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/></symbol>
-<symbol id="i-link" viewBox="0 0 24 24"><path d="M9.5 14.5 14.5 9.5"/><path d="M11.3 7.4 12.6 6a3.6 3.6 0 0 1 5.1 5.1l-1.4 1.3M12.7 16.6l-1.3 1.4a3.6 3.6 0 0 1-5.1-5.1l1.4-1.3"/></symbol>
-<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.3-4.3"/></symbol>
-<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.6 2.3 20.4h19.4z"/><path d="M12 9.6v4.6"/><path d="M12 17.2v.2"/></symbol>
+<svg aria-hidden="true" height="0" style="position:absolute" width="0"><defs>
+<marker id="pf-arrow" markerHeight="5.5" markerWidth="5.5" orient="auto-start-reverse" refX="7.5" refY="5" viewBox="0 0 10 10"><path d="M0.5,1 L9,5 L0.5,9 Z" fill="context-stroke"></path></marker>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2.4v2.4M12 19.2v2.4M2.4 12h2.4M19.2 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"></path></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2.5 4.8 13.4h6.1l-1.1 8.1 8.4-11h-6.1z"></path></symbol>
+<symbol id="i-thermo" viewBox="0 0 24 24"><path d="M10 13.6V5a2 2 0 0 1 4 0v8.6a4 4 0 1 1-4 0z"></path><path d="M12 8.5v6.4"></path></symbol>
+<symbol id="i-chip" viewBox="0 0 24 24"><rect height="10" rx="1.4" width="10" x="7" y="7"></rect><rect height="3.2" width="3.2" x="10.4" y="10.4"></rect><path d="M9.5 4v2.2M14.5 4v2.2M9.5 17.8V20M14.5 17.8V20M4 9.5h2.2M4 14.5h2.2M17.8 9.5H20M17.8 14.5H20"></path></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.8"></circle><path d="M8.6 8.6a4.8 4.8 0 0 0 0 6.8M15.4 8.6a4.8 4.8 0 0 1 0 6.8M6.1 6.1a8.3 8.3 0 0 0 0 11.8M17.9 6.1a8.3 8.3 0 0 1 0 11.8"></path></symbol>
+<symbol id="i-antenna" viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.9"></circle><path d="M12 8v12M8.5 20h7M8 9.6a6 6 0 0 1 0-7.2M16 9.6a6 6 0 0 0 0-7.2"></path></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect height="12" rx="1.5" width="18" x="3" y="4.5"></rect><path d="M9 20.5h6M12 16.5v4M7 12l3-3 2.2 2.2L16 7"></path></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.2 21 8l-9 4.8L3 8z"></path><path d="M3.4 13 12 17.6 20.6 13"></path></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3.4"></circle></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M9.5 14.5 14.5 9.5"></path><path d="M11.3 7.4 12.6 6a3.6 3.6 0 0 1 5.1 5.1l-1.4 1.3M12.7 16.6l-1.3 1.4a3.6 3.6 0 0 1-5.1-5.1l1.4-1.3"></path></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4.3-4.3"></path></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.6 2.3 20.4h19.4z"></path><path d="M12 9.6v4.6"></path><path d="M12 17.2v.2"></path></symbol>
 </defs></svg>
 <!-- ambient background -->
-<canvas id="bg-canvas" aria-hidden="true"></canvas>
-<div class="bg-grid" aria-hidden="true"></div>
-<div class="bg-glow" aria-hidden="true"></div>
-<div class="bg-aura" aria-hidden="true"></div>
-
+<canvas aria-hidden="true" id="bg-canvas"></canvas>
+<div aria-hidden="true" class="bg-grid"></div>
+<div aria-hidden="true" class="bg-glow"></div>
+<div aria-hidden="true" class="bg-aura"></div>
 <!-- themed ambient scene: orbit + CubeSat, LoRa downlink arcs, PCB traces (all very low opacity) -->
-<div class="bg-scene" aria-hidden="true">
-  <svg class="bg-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="bgEarth" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#1b4a7a"/><stop offset="55%" stop-color="#10294a"/><stop offset="100%" stop-color="#0a1a30"/>
-      </radialGradient>
-      <linearGradient id="bgTrace" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#34e0ea"/><stop offset="100%" stop-color="#4d8dff"/>
-      </linearGradient>
-    </defs>
-
-    <!-- faint planet limb, lower-left -->
-    <circle cx="150" cy="940" r="430" fill="url(#bgEarth)" opacity="0.5"/>
-    <circle cx="150" cy="940" r="430" fill="none" stroke="#5cc6ff" stroke-width="1.5" opacity="0.18"/>
-
-    <!-- orbital rings -->
-    <g class="bg-orbits" opacity="0.5">
-      <ellipse cx="1180" cy="300" rx="360" ry="150" fill="none" stroke="#3a6ea8" stroke-width="1.2" stroke-dasharray="2 9" opacity="0.5"/>
-      <ellipse cx="1180" cy="300" rx="250" ry="104" fill="none" stroke="#34e0ea" stroke-width="1.2" stroke-dasharray="2 11" opacity="0.4"/>
-    </g>
-
-    <!-- CubeSat travelling the outer orbit -->
-    <g class="bg-sat">
-      <g transform="translate(-9,-9)">
-        <rect x="3" y="3" width="12" height="12" rx="2" fill="#0d1c34" stroke="#34e0ea" stroke-width="1.2"/>
-        <rect x="-9" y="6" width="9" height="6" rx="1" fill="#16325a" stroke="#4d8dff" stroke-width="0.8"/>
-        <rect x="18" y="6" width="9" height="6" rx="1" fill="#16325a" stroke="#4d8dff" stroke-width="0.8"/>
-      </g>
-      <animateMotion dur="46s" repeatCount="indefinite" rotate="auto" path="M 1540 300 A 360 150 0 1 1 820 300 A 360 150 0 1 1 1540 300"/>
-    </g>
-
-    <!-- LoRa downlink arcs from the CubeSat region -->
-    <g class="bg-lora" transform="translate(1180,300)">
-      <path d="M0,0 q-180,260 -560,420" fill="none" stroke="#b78cff" stroke-width="1" stroke-dasharray="3 8" opacity="0.22"/>
-      <g stroke="#b78cff" fill="none" stroke-width="1.4" stroke-linecap="round">
-        <path class="lw lw1" d="M-150,210 a40,40 0 0 1 64,0"/>
-        <path class="lw lw2" d="M-168,210 a60,60 0 0 1 100,0"/>
-        <path class="lw lw3" d="M-186,210 a80,80 0 0 1 136,0"/>
-      </g>
-    </g>
-
-    <!-- subtle PCB traces, right edge -->
-    <g class="bg-traces" stroke="url(#bgTrace)" fill="none" stroke-width="1.1" opacity="0.16">
-      <path d="M1600,140 H1500 a8,8 0 0 1 -8,8 V250 a8,8 0 0 1 -8,8 H1420"/>
-      <path d="M1600,470 H1540 a8,8 0 0 0 -8,-8 V380 a8,8 0 0 0 -8,-8 H1470"/>
-      <path d="M1600,700 H1520 a8,8 0 0 1 -8,-8 V610"/>
-      <circle cx="1420" cy="258" r="3" fill="#34e0ea" stroke="none"/>
-      <circle cx="1470" cy="364" r="3" fill="#4d8dff" stroke="none"/>
-      <circle cx="1512" cy="610" r="3" fill="#34e0ea" stroke="none"/>
-    </g>
-    <!-- subtle PCB traces, left edge -->
-    <g class="bg-traces" stroke="url(#bgTrace)" fill="none" stroke-width="1.1" opacity="0.13">
-      <path d="M0,560 H80 a8,8 0 0 0 8,8 V650 a8,8 0 0 0 8,8 H150"/>
-      <path d="M0,760 H120 a8,8 0 0 1 8,-8 V690"/>
-      <circle cx="150" cy="658" r="3" fill="#34e0ea" stroke="none"/>
-    </g>
-  </svg>
+<div aria-hidden="true" class="bg-scene">
+<svg class="bg-svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<radialGradient cx="50%" cy="50%" id="bgEarth" r="50%">
+<stop offset="0%" stop-color="#1b4a7a"></stop><stop offset="55%" stop-color="#10294a"></stop><stop offset="100%" stop-color="#0a1a30"></stop>
+</radialGradient>
+<linearGradient id="bgTrace" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0%" stop-color="#34e0ea"></stop><stop offset="100%" stop-color="#4d8dff"></stop>
+</linearGradient>
+</defs>
+<!-- faint planet limb, lower-left -->
+<circle cx="150" cy="940" fill="url(#bgEarth)" opacity="0.5" r="430"></circle>
+<circle cx="150" cy="940" fill="none" opacity="0.18" r="430" stroke="#5cc6ff" stroke-width="1.5"></circle>
+<!-- orbital rings -->
+<g class="bg-orbits" opacity="0.5">
+<ellipse cx="1180" cy="300" fill="none" opacity="0.5" rx="360" ry="150" stroke="#3a6ea8" stroke-dasharray="2 9" stroke-width="1.2"></ellipse>
+<ellipse cx="1180" cy="300" fill="none" opacity="0.4" rx="250" ry="104" stroke="#34e0ea" stroke-dasharray="2 11" stroke-width="1.2"></ellipse>
+</g>
+<!-- CubeSat travelling the outer orbit -->
+<g class="bg-sat">
+<g transform="translate(-9,-9)">
+<rect fill="#0d1c34" height="12" rx="2" stroke="#34e0ea" stroke-width="1.2" width="12" x="3" y="3"></rect>
+<rect fill="#16325a" height="6" rx="1" stroke="#4d8dff" stroke-width="0.8" width="9" x="-9" y="6"></rect>
+<rect fill="#16325a" height="6" rx="1" stroke="#4d8dff" stroke-width="0.8" width="9" x="18" y="6"></rect>
+</g>
+<animateMotion dur="46s" path="M 1540 300 A 360 150 0 1 1 820 300 A 360 150 0 1 1 1540 300" repeatCount="indefinite" rotate="auto"></animateMotion>
+</g>
+<!-- LoRa downlink arcs from the CubeSat region -->
+<g class="bg-lora" transform="translate(1180,300)">
+<path d="M0,0 q-180,260 -560,420" fill="none" opacity="0.22" stroke="#b78cff" stroke-dasharray="3 8" stroke-width="1"></path>
+<g fill="none" stroke="#b78cff" stroke-linecap="round" stroke-width="1.4">
+<path class="lw lw1" d="M-150,210 a40,40 0 0 1 64,0"></path>
+<path class="lw lw2" d="M-168,210 a60,60 0 0 1 100,0"></path>
+<path class="lw lw3" d="M-186,210 a80,80 0 0 1 136,0"></path>
+</g>
+</g>
+<!-- subtle PCB traces, right edge -->
+<g class="bg-traces" fill="none" opacity="0.16" stroke="url(#bgTrace)" stroke-width="1.1">
+<path d="M1600,140 H1500 a8,8 0 0 1 -8,8 V250 a8,8 0 0 1 -8,8 H1420"></path>
+<path d="M1600,470 H1540 a8,8 0 0 0 -8,-8 V380 a8,8 0 0 0 -8,-8 H1470"></path>
+<path d="M1600,700 H1520 a8,8 0 0 1 -8,-8 V610"></path>
+<circle cx="1420" cy="258" fill="#34e0ea" r="3" stroke="none"></circle>
+<circle cx="1470" cy="364" fill="#4d8dff" r="3" stroke="none"></circle>
+<circle cx="1512" cy="610" fill="#34e0ea" r="3" stroke="none"></circle>
+</g>
+<!-- subtle PCB traces, left edge -->
+<g class="bg-traces" fill="none" opacity="0.13" stroke="url(#bgTrace)" stroke-width="1.1">
+<path d="M0,560 H80 a8,8 0 0 0 8,8 V650 a8,8 0 0 0 8,8 H150"></path>
+<path d="M0,760 H120 a8,8 0 0 1 8,-8 V690"></path>
+<circle cx="150" cy="658" fill="#34e0ea" r="3" stroke="none"></circle>
+</g>
+</svg>
+</div>
+<!-- top progress -->
+<div aria-hidden="true" class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<!-- institutional logo — CSUG top-left -->
+<div aria-hidden="true" class="slide-logo slide-logo-l"><img alt="CSUG - Centre Spatial Universitaire de Grenoble" src="csug_new.png"/></div>
+<!-- partner strip — pinned at the very bottom of every slide -->
+<div aria-hidden="true" class="partner-strip"><img alt="Partner logos" src="partner_strip_hd.png"/></div>
+<main aria-label="Presentation slides" id="deck">
+<!-- ============ SLIDE 1 — TITLE ============ -->
+<section aria-label="Title" class="slide slide--title" data-stage="all" data-time="30">
+<div class="title-layout">
+<div class="title-text">
+<div class="eyebrow reveal" style="--i:0">CSUG · Centre Spatial Universitaire de Grenoble — M1 Internship Defense</div>
+<h1 class="reveal" style="--i:1">LoRa-Based Telemetry System<br/><span class="grad title-grad-sub">for a Solar-Powered EPS &amp; THC Board</span></h1>
+<p class="title-sub reveal" style="--i:2">An end-to-end CubeSat ground platform — from harvested solar energy to wireless telemetry on a GUI.</p>
+<div class="title-meta reveal" style="--i:4">
+<div class="meta-block"><span class="meta-label">Author</span><span class="meta-value">Abdullah Basit</span></div>
+<div class="meta-block"><span class="meta-label">Supervisors</span><span class="meta-value">Frédéric Martin · Lian-Corelli Apostol</span></div>
+<div class="meta-block"><span class="meta-label">Program</span><span class="meta-value">M1 EEEA — Université Grenoble Alpes</span></div>
+<div class="meta-block"><span class="meta-label">Academic Year</span><span class="meta-value">2025 – 2026</span></div>
+</div>
+</div>
+<div class="title-globe reveal" style="--i:3">
+<div class="globe-stage" id="titleGlobe"><div class="globe-fallback"></div></div>
+<div class="globe-cap"><span class="live-dot"></span> CubeSat downlink · 868 MHz LoRa → ground station</div>
+</div>
 </div>
 
-<!-- top progress -->
-<div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
-
-<!-- institutional logo — CSUG top-left -->
-<div class="slide-logo slide-logo-l" aria-hidden="true"><img src="csug_new.png" alt="CSUG - Centre Spatial Universitaire de Grenoble" /></div>
-
-<!-- partner strip — pinned at the very bottom of every slide -->
-<div class="partner-strip" aria-hidden="true"><img src="partner_strip_hd.png" alt="Partner logos" /></div>
-
-<main id="deck" aria-label="Presentation slides">
-
-  <!-- ============ SLIDE 1 — TITLE ============ -->
-  <section class="slide slide--title" data-time="30" data-stage="all" aria-label="Title">
-    <div class="title-layout">
-      <div class="title-text">
-        <div class="eyebrow reveal" style="--i:0">CSUG · Centre Spatial Universitaire de Grenoble — M1 Internship Defense</div>
-        <h1 class="reveal" style="--i:1">LoRa-Based Telemetry System<br><span class="grad title-grad-sub">for a Solar-Powered EPS &amp; THC Board</span></h1>
-        <p class="title-sub reveal" style="--i:2">An end-to-end CubeSat ground platform — from harvested solar energy to wireless telemetry on a GUI.</p>
-        <div class="title-meta reveal" style="--i:4">
-          <div class="meta-block"><span class="meta-label">Author</span><span class="meta-value">Abdullah Basit</span></div>
-          <div class="meta-block"><span class="meta-label">Supervisors</span><span class="meta-value">Frédéric Martin · Lian-Corelli Apostol</span></div>
-          <div class="meta-block"><span class="meta-label">Program</span><span class="meta-value">M1 EEEA — Université Grenoble Alpes</span></div>
-          <div class="meta-block"><span class="meta-label">Academic Year</span><span class="meta-value">2025 – 2026</span></div>
-        </div>
-      </div>
-      <div class="title-globe reveal" style="--i:3">
-        <div class="globe-stage" id="titleGlobe"><div class="globe-fallback"></div></div>
-        <div class="globe-cap"><span class="live-dot"></span> CubeSat downlink · 868 MHz LoRa → ground station</div>
-      </div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Open with confidence.</strong> "Good morning. My name is Abdullah Basit, and today I'll present the project I built during my M1 internship at the CSUG — the University Space Centre of Grenoble — supervised by Frédéric Martin and Lian-Corelli Apostol."
-      Then state the one-line thesis: "I designed and integrated a complete telemetry chain for a CubeSat ground platform. It starts with solar energy and ends with live measurements on a screen, wirelessly, over LoRa." Point to the seven-stage chain on screen: "Everything I'll show you follows this single path — Solar, to the power system, to the thermal board, to the microcontroller, out over LoRa radio, to a receiver, and finally to a GUI." Keep it short — set the frame and move on.
-      <em>Transition:</em> "Let me start with why this kind of system is worth building."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 2 — MOTIVATION ============ -->
-  <section class="slide" data-time="61" data-stage="all" aria-label="Motivation">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">01 · Motivation</span>
-      <h2>Why this project matters</h2>
-      <p class="lead">CubeSats need their power and data subsystems validated <em>together</em> — on a bench, before flight.</p>
-    </header>
-    <div class="card-grid four">
-      <article class="card reveal" style="--i:1">
-        <div class="card-ic ic-amber"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg></div>
-        <h3>Autonomous solar power</h3>
-        <p>A flight-like node must run on harvested energy and a battery — not a lab bench supply that hides the real charger behaviour.</p>
-      </article>
-      <article class="card reveal" style="--i:2">
-        <div class="card-ic ic-cyan"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-layers"/></svg></div>
-        <h3>Integrated, not isolated</h3>
-        <p>Power, sensing, firmware and radio are usually built separately. Faults appear only when they finally meet. This platform forces them to meet early.</p>
-      </article>
-      <article class="card reveal" style="--i:3">
-        <div class="card-ic ic-violet"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg></div>
-        <h3>Wireless telemetry</h3>
-        <p>LoRa carries measurements over long range at low power — the right fit for a remote, energy-constrained sensing node.</p>
-      </article>
-      <article class="card reveal" style="--i:4">
-        <div class="card-ic ic-green"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-target"/></svg></div>
-        <h3>Traceable &amp; debuggable</h3>
-        <p>Every stage is observable: solar voltage, regulated rails, UART frames, and the LoRa payload at four separate points.</p>
-      </article>
-    </div>
-    <div class="pull reveal" style="--i:5">
-      <span class="pull-mark">“</span>
+</section>
+<!-- ============ SLIDE 2 — MOTIVATION ============ -->
+<section aria-label="Motivation" class="slide" data-stage="all" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">01 · Motivation</span>
+<h2>Why this project matters</h2>
+<p class="lead">CubeSats need their power and data subsystems validated <em>together</em> — on a bench, before flight.</p>
+</header>
+<div class="card-grid four">
+<article class="card reveal" style="--i:1">
+<div class="card-ic ic-amber"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-sun"></use></svg></div>
+<h3>Autonomous solar power</h3>
+<p>A flight-like node must run on harvested energy and a battery — not a lab bench supply that hides the real charger behaviour.</p>
+</article>
+<article class="card reveal" style="--i:2">
+<div class="card-ic ic-cyan"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-layers"></use></svg></div>
+<h3>Integrated, not isolated</h3>
+<p>Power, sensing, firmware and radio are usually built separately. Faults appear only when they finally meet. This platform forces them to meet early.</p>
+</article>
+<article class="card reveal" style="--i:3">
+<div class="card-ic ic-violet"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-radio"></use></svg></div>
+<h3>Wireless telemetry</h3>
+<p>LoRa carries measurements over long range at low power — the right fit for a remote, energy-constrained sensing node.</p>
+</article>
+<article class="card reveal" style="--i:4">
+<div class="card-ic ic-green"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-target"></use></svg></div>
+<h3>Traceable &amp; debuggable</h3>
+<p>Every stage is observable: solar voltage, regulated rails, UART frames, and the LoRa payload at four separate points.</p>
+</article>
+</div>
+<div class="pull reveal" style="--i:5">
+<span class="pull-mark">“</span>
       The goal is a faithful, bench-sized copy of the flight energy-and-data chain — complete enough to expose every integration risk <strong>before</strong> hardware is committed to a mission.
     </div>
-    <aside class="notes" hidden>
-      <strong>Tell the story of the problem.</strong> "CubeSat missions need tight integration between energy harvesting, power management, sensor acquisition, and the data uplink. But in practice these subsystems are developed and tested independently — and problems only show up when they're finally assembled."
-      Walk the four cards left to right (about 12 seconds each): First — a real node runs on solar and a battery; a bench power supply conceals how the MPPT charger actually behaves under changing light. Second — this platform deliberately connects power, sensing, firmware, and radio so integration risk surfaces early. Third — LoRa is long range and low power, which suits a remote, energy-limited sensor. Fourth — and this is my design philosophy — every stage is measurable, so when something fails I can pinpoint exactly where.
-      Close on the quote: "So the aim was a faithful, bench-sized copy of the flight chain — small enough for a lab, complete enough to find every problem before flight."
-      <em>Transition:</em> "Here's the complete system at a glance."
-    </aside>
-  </section>
 
-  <!-- ============ SLIDE 3 — SYSTEM OVERVIEW ============ -->
-  <section class="slide" data-time="61" data-stage="all" aria-label="System overview">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">02 · System overview</span>
-      <h2>One continuous chain, two simultaneous flows</h2>
-    </header>
+</section>
+<!-- ============ SLIDE 3 — SYSTEM OVERVIEW ============ -->
+<section aria-label="System overview" class="slide" data-stage="all" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">02 · System overview</span>
+<h2>One continuous chain, two simultaneous flows</h2>
+</header>
+<div class="powerflow reveal ov-flow" style="--i:1">
+<svg aria-label="System overview flow: solar to GUI" preserveAspectRatio="xMidYMid meet" role="img" viewBox="0 0 1500 210" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g class="pf-wires">
+<path class="pf-base" d="M194,105 L246,105"></path><path class="pf-dash" d="M194,105 L246,105" id="ov1"></path>
+<path class="pf-base" d="M406,105 L458,105"></path><path class="pf-dash" d="M406,105 L458,105" id="ov2"></path>
+<path class="pf-base" d="M618,105 L670,105"></path><path class="pf-dash c" d="M618,105 L670,105" id="ov3"></path>
+<path class="pf-base" d="M830,105 L882,105"></path><path class="pf-dash c" d="M830,105 L882,105" id="ov4"></path>
+<path class="pf-base" d="M1042,105 L1094,105"></path><path class="pf-dash v" d="M1042,105 L1094,105" id="ov5"></path>
+<path class="pf-base" d="M1254,105 L1306,105"></path><path class="pf-dash g" d="M1254,105 L1306,105" id="ov6"></path>
+<circle class="pf-dot" r="5"><animateMotion dur="0.95s" repeatCount="indefinite"><mpath href="#ov1" xlink:href="#ov1"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="5"><animateMotion begin="0.3s" dur="0.95s" repeatCount="indefinite"><mpath href="#ov2" xlink:href="#ov2"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="5"><animateMotion begin="0.45s" dur="0.95s" repeatCount="indefinite"><mpath href="#ov3" xlink:href="#ov3"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="5"><animateMotion begin="0.15s" dur="0.95s" repeatCount="indefinite"><mpath href="#ov4" xlink:href="#ov4"></mpath></animateMotion></circle>
+<circle class="pf-dot v" r="5"><animateMotion begin="0.6s" dur="0.95s" repeatCount="indefinite"><mpath href="#ov5" xlink:href="#ov5"></mpath></animateMotion></circle>
+<circle class="pf-dot g" r="5"><animateMotion begin="0.35s" dur="0.95s" repeatCount="indefinite"><mpath href="#ov6" xlink:href="#ov6"></mpath></animateMotion></circle>
+</g>
+<g class="pf-node amber"><rect height="116" rx="14" width="160" x="34" y="47"></rect><use class="ov-ic" height="30" href="#i-sun" width="30" x="99" xlink:href="#i-sun" y="60"></use><text class="pf-t sm" x="114" y="122">Solar Board</text><text class="pf-s" x="114" y="141">2S2P · 4.2V / 3A</text></g>
+<g class="pf-node amber"><rect height="116" rx="14" width="160" x="246" y="47"></rect><use class="ov-ic" height="30" href="#i-bolt" width="30" x="311" xlink:href="#i-bolt" y="60"></use><text class="pf-t sm" x="326" y="122">EPS Board</text><text class="pf-s" x="326" y="141">BQ25798 charger</text></g>
+<g class="pf-node data"><rect height="116" rx="14" width="160" x="458" y="47"></rect><use class="ov-ic" height="30" href="#i-thermo" width="30" x="523" xlink:href="#i-thermo" y="60"></use><text class="pf-t sm" x="538" y="122">THC Board</text><text class="pf-s" x="538" y="141">RTD · INA · heaters</text></g>
+<g class="pf-node data"><rect height="116" rx="14" width="160" x="670" y="47"></rect><use class="ov-ic" height="30" href="#i-chip" width="30" x="735" xlink:href="#i-chip" y="60"></use><text class="pf-t sm" x="750" y="122">STM32L432KC</text><text class="pf-s" x="750" y="141">UART · 115200</text></g>
+<g class="pf-node rf"><rect height="116" rx="14" width="160" x="882" y="47"></rect><use class="ov-ic" height="30" href="#i-radio" width="30" x="947" xlink:href="#i-radio" y="60"></use><text class="pf-t sm" x="962" y="122">Heltec LoRa</text><text class="pf-s" x="962" y="141">SX1276 · 868 MHz</text></g>
+<g class="pf-node rf"><rect height="116" rx="14" width="160" x="1094" y="47"></rect><use class="ov-ic" height="30" href="#i-antenna" width="30" x="1159" xlink:href="#i-antenna" y="60"></use><text class="pf-t sm" x="1174" y="122">Antenna / RX</text><text class="pf-s" x="1174" y="141">receiver · gateway</text></g>
+<g class="pf-node green"><rect height="116" rx="14" width="160" x="1306" y="47"></rect><use class="ov-ic" height="30" href="#i-monitor" width="30" x="1371" xlink:href="#i-monitor" y="60"></use><text class="pf-t sm" x="1386" y="122">GUI / Backend</text><text class="pf-s" x="1386" y="141">payload · RSSI/SNR</text></g>
+</svg>
+</div>
+<div class="legend-row reveal" style="--i:2">
+<span class="leg leg-pwr"><i></i>Energy path — solar to regulated rails</span>
+<span class="leg leg-data"><i></i>Data path — sensors to UART telemetry</span>
+<span class="leg leg-rf"><i></i>Wireless path — LoRa over 868 MHz</span>
+<span class="leg leg-gui"><i></i>Feedback — GUI display &amp; logging</span>
+</div>
+<p class="caption reveal" style="--i:3">The two flows are coupled: a LoRa transmit burst is a data event, but it also lands on the EPS as a momentary load — which is why the power budget and the comms test plan are treated together, never as separate topics.</p>
 
-    <div class="powerflow reveal ov-flow" style="--i:1">
-      <svg viewBox="0 0 1500 210" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" role="img" aria-label="System overview flow: solar to GUI">
-        <g class="pf-wires">
-          <path class="pf-base" d="M194,105 L246,105"/><path id="ov1" class="pf-dash" d="M194,105 L246,105"/>
-          <path class="pf-base" d="M406,105 L458,105"/><path id="ov2" class="pf-dash" d="M406,105 L458,105"/>
-          <path class="pf-base" d="M618,105 L670,105"/><path id="ov3" class="pf-dash c" d="M618,105 L670,105"/>
-          <path class="pf-base" d="M830,105 L882,105"/><path id="ov4" class="pf-dash c" d="M830,105 L882,105"/>
-          <path class="pf-base" d="M1042,105 L1094,105"/><path id="ov5" class="pf-dash v" d="M1042,105 L1094,105"/>
-          <path class="pf-base" d="M1254,105 L1306,105"/><path id="ov6" class="pf-dash g" d="M1254,105 L1306,105"/>
-          <circle class="pf-dot" r="5"><animateMotion dur="0.95s" repeatCount="indefinite"><mpath xlink:href="#ov1" href="#ov1"/></animateMotion></circle>
-          <circle class="pf-dot" r="5"><animateMotion dur="0.95s" begin="0.3s" repeatCount="indefinite"><mpath xlink:href="#ov2" href="#ov2"/></animateMotion></circle>
-          <circle class="pf-dot c" r="5"><animateMotion dur="0.95s" begin="0.45s" repeatCount="indefinite"><mpath xlink:href="#ov3" href="#ov3"/></animateMotion></circle>
-          <circle class="pf-dot c" r="5"><animateMotion dur="0.95s" begin="0.15s" repeatCount="indefinite"><mpath xlink:href="#ov4" href="#ov4"/></animateMotion></circle>
-          <circle class="pf-dot v" r="5"><animateMotion dur="0.95s" begin="0.6s" repeatCount="indefinite"><mpath xlink:href="#ov5" href="#ov5"/></animateMotion></circle>
-          <circle class="pf-dot g" r="5"><animateMotion dur="0.95s" begin="0.35s" repeatCount="indefinite"><mpath xlink:href="#ov6" href="#ov6"/></animateMotion></circle>
-        </g>
-        <g class="pf-node amber"><rect x="34" y="47" width="160" height="116" rx="14"/><use class="ov-ic" xlink:href="#i-sun" href="#i-sun" x="99" y="60" width="30" height="30"/><text class="pf-t sm" x="114" y="122">Solar Board</text><text class="pf-s" x="114" y="141">2S2P · 4.2V / 3A</text></g>
-        <g class="pf-node amber"><rect x="246" y="47" width="160" height="116" rx="14"/><use class="ov-ic" xlink:href="#i-bolt" href="#i-bolt" x="311" y="60" width="30" height="30"/><text class="pf-t sm" x="326" y="122">EPS Board</text><text class="pf-s" x="326" y="141">BQ25798 charger</text></g>
-        <g class="pf-node data"><rect x="458" y="47" width="160" height="116" rx="14"/><use class="ov-ic" xlink:href="#i-thermo" href="#i-thermo" x="523" y="60" width="30" height="30"/><text class="pf-t sm" x="538" y="122">THC Board</text><text class="pf-s" x="538" y="141">RTD · INA · heaters</text></g>
-        <g class="pf-node data"><rect x="670" y="47" width="160" height="116" rx="14"/><use class="ov-ic" xlink:href="#i-chip" href="#i-chip" x="735" y="60" width="30" height="30"/><text class="pf-t sm" x="750" y="122">STM32L432KC</text><text class="pf-s" x="750" y="141">UART · 115200</text></g>
-        <g class="pf-node rf"><rect x="882" y="47" width="160" height="116" rx="14"/><use class="ov-ic" xlink:href="#i-radio" href="#i-radio" x="947" y="60" width="30" height="30"/><text class="pf-t sm" x="962" y="122">Heltec LoRa</text><text class="pf-s" x="962" y="141">SX1276 · 868 MHz</text></g>
-        <g class="pf-node rf"><rect x="1094" y="47" width="160" height="116" rx="14"/><use class="ov-ic" xlink:href="#i-antenna" href="#i-antenna" x="1159" y="60" width="30" height="30"/><text class="pf-t sm" x="1174" y="122">Antenna / RX</text><text class="pf-s" x="1174" y="141">receiver · gateway</text></g>
-        <g class="pf-node green"><rect x="1306" y="47" width="160" height="116" rx="14"/><use class="ov-ic" xlink:href="#i-monitor" href="#i-monitor" x="1371" y="60" width="30" height="30"/><text class="pf-t sm" x="1386" y="122">GUI / Backend</text><text class="pf-s" x="1386" y="141">payload · RSSI/SNR</text></g>
-      </svg>
-    </div>
-
-
-    <div class="legend-row reveal" style="--i:2">
-      <span class="leg leg-pwr"><i></i>Energy path — solar to regulated rails</span>
-      <span class="leg leg-data"><i></i>Data path — sensors to UART telemetry</span>
-      <span class="leg leg-rf"><i></i>Wireless path — LoRa over 868 MHz</span>
-      <span class="leg leg-gui"><i></i>Feedback — GUI display &amp; logging</span>
-    </div>
-
-    <p class="caption reveal" style="--i:3">The two flows are coupled: a LoRa transmit burst is a data event, but it also lands on the EPS as a momentary load — which is why the power budget and the comms test plan are treated together, never as separate topics.</p>
-    <aside class="notes" hidden>
-      <strong>This is the map for the whole talk.</strong> "Before the details, here is the full system. Read it left to right." Walk each block in one breath: "Solar boards in a 2S2P array feed the EPS. The EPS — built around a BQ25798 charger — protects the input, charges the battery, and makes clean 3.3-volt and 5-volt rails. Those rails power the THC board, which measures temperature and current and drives heaters. The STM32 on the THC board formats the readings into a text frame and sends it over UART to a Heltec module, which transmits it over LoRa at 868 megahertz. A second radio receives it, and a GUI displays it."
-      Then make the key conceptual point using the legend: "There are really two flows happening at once — an energy path in amber, and a data path in cyan — plus the wireless hop in violet and the GUI feedback in green."
-      Land the coupling insight: "These flows aren't independent. When the radio transmits, it draws a current burst — that's a data event, but the EPS feels it as a load. That's why I treat the power budget and the communication test plan as one problem."
-      <em>Transition:</em> "Let me separate those two paths cleanly in the architecture."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 4 — ARCHITECTURE ============ -->
-  <section class="slide" data-time="61" data-stage="all" aria-label="High-level architecture">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">03 · High-level architecture</span>
-      <h2>Six layers · the power path and the data path, side by side</h2>
-    </header>
-
-    <div class="arch reveal" style="--i:1">
-      <div class="arch-rail arch-pwr">
-        <div class="rail-label"><span class="dot dot-amber"></span>ENERGY PATH</div>
-        <div class="rail-flow" aria-hidden="true"><span></span></div>
-        <ul class="rail-steps">
-          <li><b>Energy source</b><span>Solar board — AZUR SPACE 3G30A cells + sun sensors</span></li>
-          <li><b>Power management</b><span>EPS — BQ25798 power path, battery charge, rail generation</span></li>
-          <li><b>Regulated rails</b><span>3.3 V (logic) &amp; 5 V (heaters/load) to the THC board</span></li>
-        </ul>
-      </div>
-      <div class="arch-rail arch-data">
-        <div class="rail-label"><span class="dot dot-cyan"></span>DATA PATH</div>
-        <div class="rail-flow data" aria-hidden="true"><span></span></div>
-        <ul class="rail-steps">
-          <li><b>Measurement &amp; control</b><span>THC — RTD temperature, INA3221 current, heater logic</span></li>
-          <li><b>Embedded controller</b><span>STM32L432KC — acquire, convert, format UART frames</span></li>
-          <li><b>Wireless link &amp; backend</b><span>Heltec SX1276 → 868 MHz LoRa → receiver → GUI / ChirpStack</span></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="why-fault reveal" style="--i:2">
-      <span class="wf-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-search"/></svg></span>
-      <div><b>Why layers?</b> Fault isolation. If a temperature value never reaches the GUI, I check the chain in order — EPS rails → THC supply pins → STM32 UART → Heltec serial log → RF link → GUI parser — so debugging never becomes guesswork across power, firmware and RF at the same time.</div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Explain the separation and why it helps.</strong> "I split the system into six layers, and I think about them in two columns." Point to the amber rail: "The energy path — the solar source, the EPS power management, and the regulated rails that come out." Then the cyan rail: "The data path — the THC measurement and control, the STM32 controller, and the wireless link to the GUI."
-      Now sell the method, because this is what graders care about: "The reason for layering isn't tidiness — it's fault isolation. Suppose a temperature reading never shows up on the GUI. Because the chain is layered, I check it in a fixed order: are the EPS rails good? Is the THC getting clean supply? Is the STM32 printing a frame on UART? Does the Heltec serial log show it? Is the RF link up? Is the GUI parser correct? Each check confirms exactly one subsystem, so I never debug power, firmware, and radio all at once."
-      <em>Transition:</em> "Let's start at the very beginning of the energy path — the solar board."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 4b — WHAT MAKES THIS APPROACH DIFFERENT (CDC guideline: "how is your approach different?") ============ -->
-  <section class="slide" data-time="61" data-stage="all" aria-label="What makes this approach different">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">04 · What makes this approach different</span>
-      <h2>Not six separate boards — one chain, proven as a whole</h2>
-      <p class="lead">Most CubeSat subsystems are built and tested in isolation. This platform is deliberately the opposite — that is its contribution.</p>
-    </header>
-    <div class="card-grid four">
-      <article class="card reveal" style="--i:1">
-        <div class="card-ic ic-amber"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-layers"/></svg></div>
-        <h3>Whole chain, not piece-parts</h3>
-        <p>Solar → power → sensing → MCU → RF → GUI is built and bench-validated as <b>one</b> platform — so integration faults surface here, not in flight.</p>
-      </article>
-      <article class="card reveal" style="--i:2">
-        <div class="card-ic ic-cyan"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-target"/></svg></div>
-        <h3>Observable at every stage</h3>
-        <p>The same payload is verified at <b>four independent checkpoints</b>; readable UART / LoRa frames make every hop debuggable instead of a black box.</p>
-      </article>
-      <article class="card reveal" style="--i:3">
-        <div class="card-ic ic-violet"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></div>
-        <h3>One consolidated power path</h3>
-        <p>A single <b>BQ25798</b> replaces distributed per-panel chargers — solar + USB-C + battery + system bus + built-in MPPT. Fewer parts, fewer failure points, simpler routing.</p>
-      </article>
-      <article class="card reveal" style="--i:4">
-        <div class="card-ic ic-green"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-search"/></svg></div>
-        <h3>Honest about open work</h3>
-        <p>Remaining tasks — AD7124 firmware alignment and real solar I–V measurement — are <b>flagged on the slides</b>, not hidden.</p>
-      </article>
-    </div>
-    <div class="pull reveal" style="--i:5">
-      <span class="pull-mark">“</span>
-      The contribution isn’t a stack of separate schematics — it’s defining and proving how <strong>energy, data and RF telemetry move across the whole system as one coherent, traceable platform.</strong>
-    </div>
-    <aside class="notes" hidden>
-      <strong>This is the slide that sets you apart — state the differentiator plainly.</strong> "Before the technical detail, here is what makes this work different from how CubeSat subsystems are usually built. Normally power, sensing, firmware and radio are each developed and tested on their own, and they only meet at the very end. I did the opposite — I built and validated the entire chain as one platform."
-      Walk the four cards: "First, the whole chain from solar to GUI is proven together, so integration problems show up on my bench instead of in orbit. Second, every stage is observable — I verify the same telemetry at four independent points, and I deliberately use readable frames so every hop can be debugged. Third, I consolidated the power path onto a single BQ25798 instead of several distributed chargers, which means fewer parts and a cleaner layout. And fourth, I am explicit about what is still open, rather than hiding it."
-      Land the takeaway: "So my real contribution is not a set of separate schematics — it is proving how energy, data and RF telemetry move across the whole system as one coherent, traceable platform."
-      <em>Transition:</em> "With that framing, let's walk the chain from the very beginning — the solar board."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 5 — SOLAR BOARD ============ -->
-    <!-- ============ Solar — design flowchart ============ -->
-  <section class="slide" data-time="60" data-stage="1" aria-label="Solar panel board flow">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">05 · Solar panel board · Layer 1 — design flow</span>
-      <h2>Harvesting the photovoltaic input</h2>
-    </header>
-    <div class="split">
-      <div class="split-media reveal" style="--i:1">
-        <img src="solar_flow.png" alt="Solar board design flow: AZUR SPACE PV cells to 2.35 V bus, solar connector and sun-sensor interface" class="board-img tall zoomable-img" data-zoom-title="Solar board design flow" />
-      </div>
-      <div class="split-body">
-        <div class="spec-list">
-          <div class="spec reveal" style="--i:2"><span class="spec-k">Solar cells</span><span class="spec-v">3 × AZUR SPACE 3G30A triple-junction GaAs (PV1–PV3)</span></div>
-          <div class="spec reveal" style="--i:3"><span class="spec-k">Per-board label</span><span class="spec-v">2.35 V · 1.5 A <em class="tbc">design label — to be measured</em></span></div>
-          <div class="spec reveal" style="--i:4"><span class="spec-k">Array → EPS</span><span class="spec-v">4 boards in 2S2P ⇒ ≈ 4.2 V / 3 A target input</span></div>
-          <div class="spec reveal" style="--i:5"><span class="spec-k">Sun sensors</span><span class="spec-v">2 × TEMD6010FX01 photodiodes (D1–D2) — analog light / sun-vector</span></div>
-          <div class="spec reveal" style="--i:6"><span class="spec-k">Connectors</span><span class="spec-v">P1 — solar power out · P2 — sun-sensor signals (kept separate)</span></div>
-        </div>
-        <div class="mini-2s2p reveal" style="--i:7" aria-label="2S2P wiring concept">
-          <div class="ms-col"><span class="ms-cell">Panel</span><span class="ms-link">series</span><span class="ms-cell">Panel</span></div>
-          <div class="ms-col"><span class="ms-cell">Panel</span><span class="ms-link">series</span><span class="ms-cell">Panel</span></div>
-          <span class="ms-arrow">∥ parallel →</span>
-          <span class="ms-out">EPS input ≈ 4.2 V / 3 A</span>
-        </div>
-      </div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Explain the energy source plainly.</strong> "This is the first energy block. The design flow on the left shows it: three AZUR SPACE triple-junction space-grade cells generate the photovoltaic input, which is routed to a 2.35-volt bus, out through the solar power connector P1 — and importantly, it feeds the EPS, not the THC board directly. A separate connector, P2, carries the two sun-sensor photodiodes."
-      Be honest about the numbers: "A single board is labelled 2.35 volts at 1.5 amps, but I treat that as a design label, not a measured guarantee — the real operating point depends on illumination, temperature, and where the charger sits on the I–V curve."
-      Explain the array: "For the EPS, four boards are wired 2S2P — two in series to raise voltage, two strings in parallel to raise current — giving roughly 4.2 volts at 3 amps at the EPS input. I keep the sun-sensor signals separate so the high-current power path can be validated first."
-      <em>Transition:</em> "Here's that same board as a physical PCB and a 3D model."
-    </aside>
-  </section>
-
-  <!-- ============ Solar — animated functional flowchart ============ -->
-  <section class="slide" data-time="61" data-stage="1" aria-label="Solar board animated flow">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">06 · Solar panel board · Layer 1 — animated signal flow</span>
-      <h2>From sunlight to the EPS input</h2>
-    </header>
-    <div class="powerflow reveal" style="--i:1">
-      <svg viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Solar board functional flow diagram">
-        <g class="pf-wires">
-          <path class="pf-base" d="M210,112 L285,112"/><path id="sf1" class="pf-dash" d="M210,112 L285,112"/>
-          <path class="pf-base" d="M445,112 L520,112"/><path id="sf2" class="pf-dash" d="M445,112 L520,112"/>
-          <path class="pf-base" d="M680,112 L755,112"/><path id="sf3" class="pf-dash" d="M680,112 L755,112"/>
-          <path class="pf-base" d="M915,112 L990,112"/><path id="sf4" class="pf-dash" d="M915,112 L990,112"/>
-          <path class="pf-base" d="M245,308 L320,308"/><path id="sf5" class="pf-dash c" d="M245,308 L320,308"/>
-          <path class="pf-base" d="M480,308 L555,308"/><path id="sf6" class="pf-dash c" d="M480,308 L555,308"/>
-          <path class="pf-base" d="M715,308 L790,308"/><path id="sf7" class="pf-dash c" d="M715,308 L790,308"/>
-          <circle class="pf-dot" r="5"><animateMotion dur="1.0s" repeatCount="indefinite"><mpath xlink:href="#sf1" href="#sf1"/></animateMotion></circle>
-          <circle class="pf-dot" r="5"><animateMotion dur="1.0s" begin="0.25s" repeatCount="indefinite"><mpath xlink:href="#sf2" href="#sf2"/></animateMotion></circle>
-          <circle class="pf-dot" r="5"><animateMotion dur="1.0s" begin="0.5s" repeatCount="indefinite"><mpath xlink:href="#sf3" href="#sf3"/></animateMotion></circle>
-          <circle class="pf-dot" r="5"><animateMotion dur="1.0s" begin="0.75s" repeatCount="indefinite"><mpath xlink:href="#sf4" href="#sf4"/></animateMotion></circle>
-          <circle class="pf-dot c" r="5"><animateMotion dur="1.1s" repeatCount="indefinite"><mpath xlink:href="#sf5" href="#sf5"/></animateMotion></circle>
-          <circle class="pf-dot c" r="5"><animateMotion dur="1.1s" begin="0.35s" repeatCount="indefinite"><mpath xlink:href="#sf6" href="#sf6"/></animateMotion></circle>
-          <circle class="pf-dot c" r="5"><animateMotion dur="1.1s" begin="0.7s" repeatCount="indefinite"><mpath xlink:href="#sf7" href="#sf7"/></animateMotion></circle>
-        </g>
-        <text class="pf-lane amber" x="70" y="44">Power path</text>
-        <text class="pf-lane data" x="70" y="238">Sun-sensor path</text>
-        <g class="pf-node amber"><rect x="40" y="68" width="170" height="88" rx="13"/><text class="pf-t sm" x="125" y="100">3× AZUR SPACE</text><text class="pf-s" x="125" y="120">3G30A GaAs cells</text><text class="pf-s" x="125" y="139">PV1 · PV2 · PV3</text></g>
-        <g class="pf-node amber"><rect x="285" y="80" width="160" height="64" rx="12"/><text class="pf-t sm" x="365" y="106">2S2P wiring</text><text class="pf-s" x="365" y="125">2 series · 2 parallel</text></g>
-        <g class="pf-node amber"><rect x="520" y="80" width="160" height="64" rx="12"/><text class="pf-t sm" x="600" y="106">Solar bus</text><text class="pf-s" x="600" y="125">≈ 4.2 V / 3 A</text></g>
-        <g class="pf-node amber"><rect x="755" y="80" width="160" height="64" rx="12"/><text class="pf-t sm" x="835" y="106">Connector P1</text><text class="pf-s" x="835" y="125">power output</text></g>
-        <g class="pf-node amber"><rect x="990" y="80" width="170" height="64" rx="12"/><text class="pf-t sm" x="1075" y="106">EPS input</text><text class="pf-s" x="1075" y="125">→ BQ25798 charger</text></g>
-        <g class="pf-node data"><rect x="40" y="264" width="205" height="88" rx="13"/><text class="pf-t sm" x="142" y="296">2× TEMD6010</text><text class="pf-s" x="142" y="316">Si photodiodes</text><text class="pf-s" x="142" y="335">sun sensors D1 · D2</text></g>
-        <g class="pf-node data"><rect x="320" y="276" width="160" height="64" rx="12"/><text class="pf-t sm" x="400" y="302">Sun-vector</text><text class="pf-s" x="400" y="321">analog light level</text></g>
-        <g class="pf-node data"><rect x="555" y="276" width="160" height="64" rx="12"/><text class="pf-t sm" x="635" y="302">Connector P2</text><text class="pf-s" x="635" y="321">signals output</text></g>
-        <g class="pf-node data"><rect x="790" y="276" width="220" height="64" rx="12"/><text class="pf-t sm" x="900" y="302">OBC / EPS interface</text><text class="pf-s" x="900" y="321">attitude estimate · MPPT hint</text></g>
-      </svg>
-    </div>
-    <div class="pf-eqn reveal" style="--i:2">
-      <span class="pe-l">Two outputs, one board</span>
-      <code>P1&nbsp;=&nbsp;power&nbsp;→&nbsp;EPS&nbsp;&nbsp;·&nbsp;&nbsp;P2&nbsp;=&nbsp;sun-vector&nbsp;→&nbsp;OBC</code>
-      <span class="pe-n">Power and sun-sensor signals are kept on separate connectors so the high-current path can be validated independently. The per-board <em class="tbc">2.35 V / 1.5 A is a design label to be measured</em>; the array target is reached by the 2S2P configuration.</span>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Bring the solar board to life as a flow — two parallel jobs on one board.</strong> "The board does two things at once. Follow the amber path: three AZUR SPACE triple-junction GaAs cells generate power; the 2S2P wiring — two in series, two in parallel — sets the voltage and current; that forms the solar bus, roughly 4.2 volts at 3 amps at the array; and it leaves through connector P1 to the EPS charger."
-      Then the cyan path: "In parallel, two TEMD6010 photodiodes act as sun sensors. They produce an analog sun-vector — a measure of where the light is coming from — which leaves through a separate connector, P2, toward the on-board computer."
-      Make the design point honestly: "I deliberately keep power and signals on separate connectors so the high-current path can be brought up and validated on its own. And the per-board 2.35-volt figure is a design label — the real operating point depends on illumination and where the charger sits on the I–V curve."
-      <em>Transition:</em> "Here is that same board as a physical PCB and a 3D model."
-    </aside>
-  </section>
-
-  <!-- ============ Solar — PCB & interactive 3D ============ -->
-  <section class="slide slide--board" data-time="55" data-stage="1" aria-label="Solar board PCB and 3D">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">07 · Solar panel board · Layer 1 — board realization</span>
-      <h2>From schematic to a physical board</h2>
-    </header>
-    <div class="board-duo">
-      <div class="board-cell reveal" style="--i:1">
-        <div class="board-frame"><img src="solar_board.png" alt="Solar panel PCB layout, three solar-cell footprints" /></div>
-        <span class="board-cap"><b>PCB layout</b> · Ver_01 — cell placement &amp; routing</span>
-      </div>
-      <div class="board-cell reveal" style="--i:2">
-        <div class="viewer" id="viewerSolar" data-model-key="solar" data-fallback="solar_board.png">
-          <div class="viewer-fallback"><img src="solar_board.png" alt="Solar panel board" /></div>
-          <div class="viewer-loading">Loading 3D model…</div>
-        </div>
-        <span class="board-cap"><b>Interactive 3D</b> · drag to rotate · scroll to zoom</span>
-      </div>
-    </div>
-    <p class="caption reveal" style="--i:3">The same design as a manufactured board (left) and a rotatable 3D model (right) — used to check cell placement, connector orientation, and how the board stacks in the assembly.</p>
-    <aside class="notes" hidden>
-      <strong>Keep this one light and visual.</strong> "This is the solar board made real — on the left the PCB layout I routed, on the right the actual 3D model you can spin." Make one engineering point: "Seeing the board in 3D matters for integration — I check that the solar connector faces the right way and that nothing collides when this board mounts above the EPS." If presenting live, grab the 3D and rotate it once.
-      <em>Transition:</em> "That solar input now enters the heart of the power system — the EPS."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 6 — EPS BOARD ============ -->
-  <section class="slide" data-time="61" data-stage="2" aria-label="EPS board">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">08 · EPS board — Layer 2</span>
-      <h2>Electrical Power System — one BQ25798 manages everything</h2>
-    </header>
-    <div class="split wide-media">
-      <div class="split-media reveal" style="--i:1">
-        <img src="eps_diagram.png" alt="EPS power architecture using a single BQ25798 for solar, USB-C, battery and system bus" class="board-img zoomable-img" data-zoom-title="EPS power architecture" />
-      </div>
-      <div class="split-body">
-        <p class="body-lead reveal" style="--i:2">The charger sits between four sources and loads: solar in, USB-C in, battery, and the system bus that powers the rest of the platform.</p>
-        <div class="chip-row reveal" style="--i:3">
-          <span class="chip chip-amber">VIN1 ← Solar</span>
-          <span class="chip chip-blue">VIN2 ← USB-C</span>
-          <span class="chip chip-green">BAT — 1S Li-ion</span>
-          <span class="chip chip-cyan">SYS bus</span>
-          <span class="chip">3.3 V rail</span>
-          <span class="chip">5 V rail</span>
-        </div>
-        <div class="ic-list reveal" style="--i:4">
-          <div class="icl"><b>BQ25798</b> dual-input buck-boost charger · MPPT · USB-PD power path</div>
-          <div class="icl"><b>INA260</b> solar-bus power &amp; current monitor (I²C)</div>
-          <div class="icl"><b>LTC4352</b> ideal-diode / power-path lane protection</div>
-          <div class="icl"><b>BQ27441</b> battery fuel gauge (state-of-charge)</div>
-          <div class="icl"><b>AP50N04QD ×2</b> input MOSFETs for VIN1 / VIN2 lanes</div>
-        </div>
-        <div class="rule-callout reveal" style="--i:5">
-          <span class="rc-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-warn"/></svg></span>
-          <div><b>Golden rules.</b> Solar only on VIN1, USB-C only on VIN2 — never both on one input. A regulated rail is never wired to the battery port; charging stays under BQ25798 control. The THC board is connected only after rails are verified.</div>
-        </div>
-      </div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Frame the EPS as the decision-maker for power.</strong> "The EPS is the power-management layer between four things: the solar array, a USB-C input for bench work, the battery, and the system bus that feeds everything downstream." Mention the design decision early: "A key choice here was to centralise everything on one BQ25798 — a dual-input buck-boost charger with built-in MPPT — instead of separate charger blocks. I'll come back to why on the challenges slide."
-      Walk the chips: "Solar enters on input one, USB-C on input two, the battery is a single-cell lithium-ion, and the charger produces the system bus, which feeds the 3.3 and 5-volt regulators." Touch the support ICs briefly — the INA260 monitors solar power over I²C, the LTC4352 protects and switches the input lanes, and a fuel gauge tracks battery charge.
-      End on the safety rules, slowly: "There are three rules I never break. Solar only on input one, USB-C only on input two. Never connect a regulated rail straight to the battery — charging must stay under the charger's control. And the THC board only gets connected after I've confirmed the rails are stable and current-limited."
-      <em>Transition:</em> "Those rails now power the payload — the THC board."
-    </aside>
-  </section>
-
-  <!-- ============ Power system — end-to-end animated flow ============ -->
-  <section class="slide" data-time="61" data-stage="2" aria-label="Power system flow">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">09 · Power system · Layer 2 — energy distribution</span>
-      <h2>The complete power path — source to regulated rails</h2>
-    </header>
-    <div class="powerflow reveal" style="--i:1">
-      <svg viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Power system flow diagram">
-        <defs>
-          <filter id="pfGlow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <g class="pf-wires">
-          <path class="pf-base" d="M200,99 L250,99"/><path id="pf1" class="pf-dash" d="M200,99 L250,99"/>
-          <path class="pf-base" d="M390,99 L430,99 L430,170 L470,170"/><path id="pf2" class="pf-dash" d="M390,99 L430,99 L430,170 L470,170"/>
-          <path class="pf-base" d="M200,328 L250,328"/><path id="pf3" class="pf-dash b" d="M200,328 L250,328"/>
-          <path class="pf-base" d="M390,328 L430,328 L430,220 L470,220"/><path id="pf4" class="pf-dash b" d="M390,328 L430,328 L430,220 L470,220"/>
-          <path class="pf-base" d="M590,270 L590,326"/><path id="pf5" class="pf-dash g" d="M590,270 L590,326"/>
-          <path class="pf-base" d="M710,196 L780,196"/><path id="pf6" class="pf-dash" d="M710,196 L780,196"/>
-          <path class="pf-base" d="M940,196 L960,196 L960,111 L980,111"/><path id="pf7" class="pf-dash" d="M940,196 L960,196 L960,111 L980,111"/>
-          <path class="pf-base" d="M940,196 L960,196 L960,281 L980,281"/><path id="pf8" class="pf-dash" d="M940,196 L960,196 L960,281 L980,281"/>
-          <circle class="pf-dot" r="4"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath xlink:href="#pf1" href="#pf1"/></animateMotion></circle>
-          <circle class="pf-dot" r="4"><animateMotion dur="2.0s" repeatCount="indefinite"><mpath xlink:href="#pf2" href="#pf2"/></animateMotion></circle>
-          <circle class="pf-dot b" r="4"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath xlink:href="#pf3" href="#pf3"/></animateMotion></circle>
-          <circle class="pf-dot b" r="4"><animateMotion dur="2.0s" repeatCount="indefinite"><mpath xlink:href="#pf4" href="#pf4"/></animateMotion></circle>
-          <circle class="pf-dot g" r="4"><animateMotion dur="2.2s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"><mpath xlink:href="#pf5" href="#pf5"/></animateMotion></circle>
-          <circle class="pf-dot" r="4"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath xlink:href="#pf6" href="#pf6"/></animateMotion></circle>
-          <circle class="pf-dot" r="4"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath xlink:href="#pf7" href="#pf7"/></animateMotion></circle>
-          <circle class="pf-dot" r="4"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath xlink:href="#pf8" href="#pf8"/></animateMotion></circle>
-        </g>
-        <g class="pf-node amber"><rect x="30" y="60" width="170" height="78" rx="12"/><text class="pf-t" x="115" y="94">Solar array</text><text class="pf-s" x="115" y="116">2S2P · 4.2 V / 3 A</text></g>
-        <g class="pf-node blue"><rect x="30" y="292" width="170" height="72" rx="12"/><text class="pf-t" x="115" y="324">USB-C input</text><text class="pf-s" x="115" y="345">bench / charge</text></g>
-        <g class="pf-node small"><rect x="250" y="72" width="140" height="54" rx="10"/><text class="pf-t sm" x="320" y="93">VIN1 protect</text><text class="pf-s" x="320" y="111">fuse · TVS · Q1</text></g>
-        <g class="pf-node small"><rect x="250" y="301" width="140" height="54" rx="10"/><text class="pf-t sm" x="320" y="322">VIN2 protect</text><text class="pf-s" x="320" y="340">ESD · fuse · Q2</text></g>
-        <g class="pf-node hub"><rect x="470" y="120" width="240" height="150" rx="14"/><text class="pf-t lg" x="590" y="170">BQ25798</text><text class="pf-s" x="590" y="196">dual-input buck-boost charger</text><text class="pf-s" x="590" y="218">MPPT · power path · USB-PD</text><rect class="pf-halo" x="470" y="120" width="240" height="150" rx="14"/></g>
-        <g class="pf-node green"><rect x="510" y="326" width="160" height="72" rx="12"/><text class="pf-t" x="590" y="356">1S Li-ion</text><text class="pf-s" x="590" y="377">battery · BQ27441 gauge</text></g>
-        <g class="pf-node cyan"><rect x="780" y="160" width="160" height="72" rx="12"/><text class="pf-t" x="860" y="191">SYS bus</text><text class="pf-s" x="860" y="212">system power rail</text></g>
-        <g class="pf-node"><rect x="980" y="80" width="180" height="62" rx="12"/><text class="pf-t" x="1070" y="106">3.3 V rail</text><text class="pf-s" x="1070" y="126">STM32 · logic · sensors</text></g>
-        <g class="pf-node"><rect x="980" y="250" width="180" height="62" rx="12"/><text class="pf-t" x="1070" y="276">5 V rail</text><text class="pf-s" x="1070" y="296">heaters · loads</text></g>
-      </svg>
-    </div>
-    <div class="legend-row reveal" style="--i:2;justify-content:center">
-      <span class="leg leg-pwr"><i></i> Solar energy</span>
-      <span class="leg leg-data" style="--c:var(--blue)"><i style="background:var(--blue)"></i> USB-C input</span>
-      <span class="leg leg-gui"><i></i> Battery charge / discharge</span>
-      <span class="leg leg-rf" style="--c:var(--cyan)"><i style="background:var(--cyan)"></i> System bus → rails</span>
-    </div>
-    <aside class="notes" hidden>
-      <strong>This is the whole power story on one slide — walk the energy.</strong> "Follow the light. Solar comes in on the left through input-one protection; the bench USB-C comes in through input-two protection. Both feed the single BQ25798, which is the decision-maker." Point at the hub: "From here three things happen at once — it runs MPPT to pull the most power from the panels, it charges the battery below, and it drives the system bus to the right."
-      Then the branch: "The battery link is two-way — the charger tops it up in sunlight and draws from it in the dark, so the platform never loses power. The system bus then feeds the two regulated rails: 3.3 volts for the STM32, logic and sensors, and 5 volts for the heaters and loads."
-      Tie it to the design decision: "The important point is that this entire path is one chip instead of several scattered charger blocks — fewer parts, one place to reason about power, and built-in MPPT."
-      <em>Transition:</em> "Those rails now power the payload — the THC board."
-    </aside>
-  </section>
-
-  <!-- ============ EPS — PCB & interactive 3D ============ -->
-  <section class="slide slide--board" data-time="55" data-stage="2" aria-label="EPS board PCB and 3D">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">10 · EPS board · Layer 2 — board realization</span>
-      <h2>The power core, as a physical board</h2>
-    </header>
-    <div class="board-duo">
-      <div class="board-cell reveal" style="--i:1">
-        <div class="board-frame"><img src="eps_board.png" alt="EPS PCB layout — BQ25798 charger at centre, dual-input protection, 3.3 V / 5 V rails and the PC-104 stack header" /></div>
-        <span class="board-cap"><b>PCB layout</b> · PT-PWR-EPS-002 — BQ25798 · dual-input · PC-104 header</span>
-      </div>
-      <div class="board-cell reveal" style="--i:2">
-        <div class="viewer" id="viewerEps" data-model-key="eps" data-fallback="eps_board.png">
-          <div class="viewer-fallback"><img src="eps_board.png" alt="EPS board" /></div>
-          <div class="viewer-loading">Loading 3D model…</div>
-        </div>
-        <span class="board-cap"><b>Interactive 3D</b> · drag to rotate · scroll to zoom</span>
-      </div>
-    </div>
-    <p class="caption reveal" style="--i:3">The EPS as a manufactured board (left) and a rotatable 3D model (right). Everything from the power diagram lives here: the single BQ25798 charger at the centre, the two protected inputs on the edges, and the 3.3 V / 5 V rail regulators — with the PC-104 header along one edge that lets this board stack under the THC payload.</p>
-    <aside class="notes" hidden>
-      <strong>Tie the board back to the power story.</strong> "Here is the EPS made real — on the left the PCB I routed, on the right the 3D model you can spin. Everything we just walked through on the power diagram is on this board: the BQ25798 in the middle, input-one and input-two protection at the edges, and the 3.3- and 5-volt regulators that drive the bus." Make the integration point: "This long header is the PC-104 connector — it's how the EPS mates with the THC board into one stack, which I'll show you at the end." If live, grab the 3D and rotate it once.
-      <em>Transition:</em> "With the power core built, let's look at the payload it powers — the THC board."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 7 — THC BOARD ============ -->
-      <!-- ============ THC — functional block diagram (image) ============ -->
-  <section class="slide" data-time="61" data-stage="3" aria-label="THC board block diagram">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">11 · THC board · Layer 3 — block diagram</span>
-      <h2>Thermal &amp; Heater Control — the measurement payload</h2>
-    </header>
-    <div class="split wide-media">
-      <div class="split-media reveal" style="--i:1">
-        <img src="thc_diagram.png" alt="THC board block diagram with STM32, AD7124 ADCs, INA3221, PCF8574A and MOSFET heater drivers" class="board-img zoomable-img" data-zoom-title="THC board block diagram" />
-      </div>
-      <div class="split-body">
-        <div class="spec-list">
-          <div class="spec reveal" style="--i:2"><span class="spec-k">Controller</span><span class="spec-v">STM32L432KC (NUCLEO header) — SPI / I²C / UART / PWM</span></div>
-          <div class="spec reveal" style="--i:3"><span class="spec-k">Temperature</span><span class="spec-v">PT100 RTD front-end — AD7124-4 24-bit ADC on the board; MAX31865-style in the firmware PoC <em class="tbc">final alignment to be confirmed</em></span></div>
-          <div class="spec reveal" style="--i:4"><span class="spec-k">Electrical monitor</span><span class="spec-v">2 × INA3221 triple-channel current / bus-voltage monitors (I²C)</span></div>
-          <div class="spec reveal" style="--i:5"><span class="spec-k">Heater drive</span><span class="spec-v">6 × SQD30N05 MOSFETs · SN74HC08 AND-gate enable logic · PCF8574A GPIO expander</span></div>
-          <div class="spec reveal" style="--i:6"><span class="spec-k">Future bus</span><span class="spec-v">TCAN332 CAN transceiver — reserved for OBC integration</span></div>
-        </div>
-      </div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Introduce the THC board from its block diagram first.</strong> "The THC board — Thermal and Heater Control — is the payload powered by the EPS. Its job: measure temperature and current, drive heaters, and hand telemetry to the radio chain." Walk the diagram: "At the centre is the STM32L432KC, talking SPI to the temperature front-end, I²C to the monitors, and UART out to the radio."
-      Be precise and honest on the front-end: "Temperature comes from PT100 RTD sensors. On the final board the converter is an AD7124 24-bit ADC; my firmware proof-of-concept used a MAX31865-style interface — aligning them is a defined next step." Then the rest: "Two INA3221 chips monitor currents and rail voltages. Heaters are driven by six MOSFETs, gated by AND-gate logic, with a GPIO expander providing the enable lines, and a CAN transceiver is on board for future integration."
-      <em>Transition:</em> "Let me show that same flow brought to life — how a measurement actually travels through the board."
-    </aside>
-  </section>
-
-  <!-- ============ THC — animated functional flowchart ============ -->
-  <section class="slide" data-time="61" data-stage="3" aria-label="THC board animated flow">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">12 · THC board · Layer 3 — animated signal flow</span>
-      <h2>Thermal &amp; Heater Control — sense, decide, drive</h2>
-    </header>
-    <div class="powerflow reveal" style="--i:1">
-      <svg viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" role="img" aria-label="THC board functional flow diagram">
-        <defs>
-          <filter id="tfGlow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <g class="pf-wires">
-          <path class="pf-base" d="M210,93 L260,93"/><path id="tf1" class="pf-dash c" d="M210,93 L260,93"/>
-          <path class="pf-base" d="M410,93 L430,93 L430,160 L450,160"/><path id="tf2" class="pf-dash c" d="M410,93 L430,93 L430,160 L450,160"/>
-          <path class="pf-base" d="M230,333 L350,333 L350,232 L450,232"/><path id="tf3" class="pf-dash c" d="M230,333 L350,333 L350,232 L450,232"/>
-          <path class="pf-base" d="M560,274 L560,328"/><path id="tf4" class="pf-dash c" d="M560,274 L560,328"/>
-          <path class="pf-base" d="M670,160 L710,160 L710,116 L740,116"/><path id="tf5" class="pf-dash" d="M670,160 L710,160 L710,116 L740,116"/>
-          <path class="pf-base" d="M650,358 L700,358 L700,128 L740,128"/><path id="tf6" class="pf-dash c" d="M650,358 L700,358 L700,128 L740,128"/>
-          <path class="pf-base" d="M825,146 L825,188"/><path id="tf7" class="pf-dash" d="M825,146 L825,188"/>
-          <path class="pf-base" d="M910,219 L945,219 L945,173 L980,173"/><path id="tf8" class="pf-dash" d="M910,219 L945,219 L945,173 L980,173"/>
-          <path class="pf-base" d="M670,232 L730,232 L730,350 L760,350"/><path id="tf9" class="pf-dash v" d="M670,232 L730,232 L730,350 L760,350"/>
-          <circle class="pf-dot c" r="4"><animateMotion dur="1.5s" repeatCount="indefinite"><mpath xlink:href="#tf1" href="#tf1"/></animateMotion></circle>
-          <circle class="pf-dot c" r="4"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath xlink:href="#tf2" href="#tf2"/></animateMotion></circle>
-          <circle class="pf-dot c" r="4"><animateMotion dur="2.0s" repeatCount="indefinite"><mpath xlink:href="#tf3" href="#tf3"/></animateMotion></circle>
-          <circle class="pf-dot c" r="4"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath xlink:href="#tf4" href="#tf4"/></animateMotion></circle>
-          <circle class="pf-dot" r="4"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath xlink:href="#tf5" href="#tf5"/></animateMotion></circle>
-          <circle class="pf-dot c" r="4"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath xlink:href="#tf6" href="#tf6"/></animateMotion></circle>
-          <circle class="pf-dot" r="4"><animateMotion dur="1.4s" repeatCount="indefinite"><mpath xlink:href="#tf7" href="#tf7"/></animateMotion></circle>
-          <circle class="pf-dot" r="4"><animateMotion dur="1.9s" repeatCount="indefinite"><mpath xlink:href="#tf8" href="#tf8"/></animateMotion></circle>
-          <circle class="pf-dot v" r="4"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath xlink:href="#tf9" href="#tf9"/></animateMotion></circle>
-        </g>
-        <g class="pf-node data"><rect x="40" y="60" width="170" height="66" rx="11"/><text class="pf-t" x="125" y="89">PT100 RTDs</text><text class="pf-s" x="125" y="109">9 ch · 2/4-wire</text></g>
-        <g class="pf-node data"><rect x="260" y="63" width="150" height="60" rx="10"/><text class="pf-t sm" x="335" y="90">AD7124-4</text><text class="pf-s" x="335" y="108">24-bit Σ-Δ ADC</text></g>
-        <g class="pf-node data"><rect x="40" y="300" width="190" height="66" rx="11"/><text class="pf-t" x="135" y="330">2× INA3221</text><text class="pf-s" x="135" y="350">current · bus V (I²C)</text></g>
-        <g class="pf-node hubc"><rect x="450" y="118" width="220" height="156" rx="14"/><text class="pf-t lg" x="560" y="178">STM32L432KC</text><text class="pf-s" x="560" y="204">acquire · convert</text><text class="pf-s" x="560" y="224">format · drive</text><rect class="pf-haloc" x="450" y="118" width="220" height="156" rx="14"/></g>
-        <g class="pf-node data"><rect x="470" y="328" width="180" height="60" rx="10"/><text class="pf-t sm" x="560" y="353">PCF8574A GPIO</text><text class="pf-s" x="560" y="371">heater enable lines</text></g>
-        <g class="pf-node amber"><rect x="740" y="86" width="170" height="60" rx="11"/><text class="pf-t sm" x="825" y="111">Enable logic</text><text class="pf-s" x="825" y="129">SN74HC08 AND</text></g>
-        <g class="pf-node amber"><rect x="740" y="188" width="170" height="62" rx="11"/><text class="pf-t sm" x="825" y="214">6× SQD30N05</text><text class="pf-s" x="825" y="233">N-MOSFET drivers</text></g>
-        <g class="pf-node amber"><rect x="980" y="138" width="170" height="70" rx="12"/><text class="pf-t" x="1065" y="170">Heaters H1–H6</text><text class="pf-s" x="1065" y="190">VCC_BAT · PWM</text></g>
-        <g class="pf-node rf"><rect x="760" y="320" width="190" height="60" rx="11"/><text class="pf-t sm" x="855" y="345">UART → Heltec</text><text class="pf-s" x="855" y="363">115200 · telemetry</text></g>
-      </svg>
-    </div>
-    <div class="pf-eqn reveal" style="--i:2">
-      <span class="pe-l">Heater safety interlock</span>
-      <code>Heater&nbsp;ON&nbsp;=&nbsp;Enable&nbsp;∧&nbsp;PWM</code>
-      <span class="pe-n">A channel fires only when both an enable command <em>and</em> a PWM command are high — no accidental heating on reset/boot. Final RTD front-end: AD7124 on the board; MAX31865-style in the firmware PoC <em class="tbc">(alignment to be confirmed)</em>.</span>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Explain the board as a clean signal chain.</strong> "Measurements come from the left. PT100 RTDs are digitized by the AD7124, and INA3221 monitors current and bus voltage. Both streams enter the STM32L432KC, which formats the telemetry and decides what to drive next."
-      Continue with the actuation path: "For heating, the STM32 sends PWM, while the PCF8574A sends the enable command. Both meet in the AND-gate safety logic, then drive the MOSFET stage, and only then energize the heaters."
-      End with output: "At the same time, the STM32 packages telemetry over UART to the Heltec LoRa board. So the slide shows one clean loop: sense, decide, drive, and report."
-      <em>Transition:</em> "Next I show the physical board and the 3D model."
-    </aside>
-  </section>
-
-  <!-- ============ THC — PCB & interactive 3D ============ -->
-  <section class="slide slide--board" data-time="55" data-stage="3" aria-label="THC board PCB and 3D">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">13 · THC board · Layer 3 — board realization</span>
-      <h2>The measurement payload, as built</h2>
-    </header>
-    <div class="board-duo">
-      <div class="board-cell reveal" style="--i:1">
-        <div class="board-frame"><img src="thc_board.png" alt="THC main board PCB layout with STM32, ADCs and MOSFET heater drivers" /></div>
-        <span class="board-cap"><b>PCB layout</b> · STM32 · AD7124 · INA3221 · 6× MOSFET drivers</span>
-      </div>
-      <div class="board-cell reveal" style="--i:2">
-        <div class="viewer" id="viewerThc" data-model-key="pcb" data-fallback="thc_board.png">
-          <div class="viewer-fallback"><img src="thc_board.png" alt="THC main board" /></div>
-          <div class="viewer-loading">Loading 3D model…</div>
-        </div>
-        <span class="board-cap"><b>Interactive 3D</b> · drag to rotate · scroll to zoom</span>
-      </div>
-    </div>
-    <p class="caption reveal" style="--i:3">A dense mixed-signal board: delicate RTD sensing and current monitors sit alongside six high-current heater drivers — the 3D view (right) is how I verify connector access and component clearance before assembly.</p>
-    <aside class="notes" hidden>
-      <strong>Show the density and the integration thinking.</strong> "Here's the THC board as a real PCB and in 3D. It's a genuinely mixed-signal board — on one side delicate temperature sensing and current monitoring, on the other six high-current heater drivers — so layout discipline matters to keep the noisy power away from the quiet measurement." Rotate the 3D once if live, and point out the header that stacks onto the EPS and the connectors for the RTDs and heaters.
-      <em>Transition:</em> "So how does the STM32 turn these measurements into telemetry? That's the firmware."
-    </aside>
-  </section>
-
-  <!-- ============ System integration — EPS + THC mated stack (real composed 3D) ============ -->
-  <section class="slide slide--board slide--assembly" data-time="55" data-stage="all" aria-label="EPS and THC assembled into one stack">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">14 · System integration — the assembled stack</span>
-      <h2>Two boards mate into one payload stack</h2>
-    </header>
-
-    <div class="asm-mate reveal" style="--i:1">
-      <figure class="asm-chip">
-        <div class="asm-thumb"><img src="eps_board.png" alt="EPS board" /></div>
-        <figcaption><b>EPS</b><span>power core</span></figcaption>
-      </figure>
-      <span class="asm-op">+</span>
-      <figure class="asm-chip">
-        <div class="asm-thumb"><img src="thc_board.png" alt="THC board" /></div>
-        <figcaption><b>THC</b><span>measurement payload</span></figcaption>
-      </figure>
-      <span class="asm-op asm-arrow">→</span>
-
-      <!-- mated stack: THC physically stacked on top of EPS via the PC-104 header -->
-      <figure class="asm-stack" aria-label="EPS and THC mated into one PC-104 stack">
-        <div class="stack-scene">
-          <div class="stack-3d">
-            <div class="stack-board sb-eps">
-              <img src="eps_board.png" alt="EPS board — bottom of the PC-104 stack" />
-              <span class="sb-tag">EPS · bottom</span>
-            </div>
-            <div class="stack-board sb-thc">
-              <img src="thc_board.png" alt="THC board — top of the PC-104 stack" />
-              <span class="sb-tag">THC · top</span>
-            </div>
-          </div>
-        </div>
-        <figcaption><b>Mated stack</b><span>PC-104 header · 15.24 mm pitch</span></figcaption>
-      </figure>
-    </div>
-
-    <div class="asm-viewer-wrap reveal" style="--i:2">
-      <div class="viewer asm-viewer" id="viewerAsm" data-compose="eps,pcb" data-fallback="eps_board.png">
-        <div class="viewer-fallback"><img src="eps_board.png" alt="EPS and THC assembled stack" /></div>
-        <div class="viewer-loading">Assembling 3D stack…</div>
-      </div>
-      <span class="board-cap"><b>Interactive 3D — assembled stack</b> · EPS (bottom) + THC (top) · drag to rotate · scroll to zoom</span>
-    </div>
-
-    <p class="caption reveal" style="--i:3">The two boards aren't standalone — they bolt together into one CubeSat-format stack. <em>EPS on the bottom</em> pushes regulated power up through the PC-104 header; <em>THC on top</em> draws that power and returns telemetry down the same connector. The 3D view is built from both real board models, so the whole mated assembly rotates.</p>
-    <aside class="notes" hidden>
-      <strong>This is the payoff slide — two boards become one system.</strong> "Everything so far was one board at a time. In hardware they don't live apart — they bolt into a single PC-104 stack. The EPS sits on the bottom and pushes regulated 3.3 and 5 volts up through the hundred-pin header; the THC sits on top, takes that power, and sends its temperature and current telemetry back down the same connector." Rotate the 3D once if live: "This is the mated stack, built from both real board models." Honest note if asked: a single merged CAD assembly export can be dropped straight in here later.
-      <em>Transition:</em> "That's the hardware, assembled. Now — how does the firmware turn those measurements into a telemetry frame?"
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 8 — STM32 / SCM ============ -->
-  <section class="slide" data-time="61" data-stage="4" aria-label="STM32 controller and firmware">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">15 · STM32 / SCM interface — Layer 4</span>
-      <h2>From RTD resistance to a readable telemetry frame</h2>
-    </header>
-    <div class="split">
-      <div class="split-body">
-        <div class="fw-loop reveal" style="--i:1">
-          <div class="fwl"><span class="fwl-n">1</span> Init clocks &amp; peripherals (SPI / I²C / UART)</div>
-          <div class="fwl"><span class="fwl-n">2</span> Configure RTD interface</div>
-          <div class="fwl"><span class="fwl-n">3</span> Acquire temperature channel(s)</div>
-          <div class="fwl"><span class="fwl-n">4</span> Convert resistance → °C (Callendar–Van Dusen)</div>
-          <div class="fwl"><span class="fwl-n">5</span> Format ASCII payload</div>
-          <div class="fwl"><span class="fwl-n">6</span> Transmit on UART, repeat every 2 s</div>
-        </div>
-        <div class="eqn reveal" style="--i:2">
-          <span class="eqn-label">RTD model</span>
-          <code>R<sub>T</sub> = R<sub>0</sub> (1 + A·T + B·T²)</code>
-          <span class="eqn-note">PT100 resistance solved for temperature, then validated against a known resistor before live heating.</span>
-        </div>
-        <div class="rtd-example reveal" style="--i:3" aria-label="Animated RTD conversion example">
-          <div class="rtd-title">One simple conversion example</div>
-          <div class="rtd-steps">
-            <span class="rtd-step"><b>1</b> Measured <em>R</em> = 109.63 Ω</span>
-            <span class="rtd-step"><b>2</b> ΔR = 109.63 − 100 = 9.63 Ω</span>
-            <span class="rtd-step"><b>3</b> T ≈ 9.63 / 0.385 = 25.0 °C</span>
-            <span class="rtd-step out"><b>4</b> UART frame → T1:25.00</span>
-          </div>
-        </div>
-      </div>
-      <div class="split-body">
-        <div class="terminal reveal" style="--i:4">
-          <div class="term-bar"><span class="td"></span><span class="td"></span><span class="td"></span><span class="term-title">STM32 · USART2 · 115200 8N1</span></div>
-          <div class="term-body">
-            <div class="tline"><span class="tprompt">stm32&gt;</span> init ok — rtd1 ready</div>
-            <div class="tline tx">T1:24.81,T2:0.00\r\n</div>
-            <div class="tline tx">T1:25.06,T2:0.00\r\n</div>
-            <div class="tline tx">T1:25.75,T2:0.00\r\n</div>
-            <div class="tline cursor">T1:<span class="blink">_</span></div>
-          </div>
-        </div>
-        <div class="kv-row reveal" style="--i:5">
-          <div class="kv"><span class="kv-k">Link</span><span class="kv-v">UART · 115200 · 8N1</span></div>
-          <div class="kv"><span class="kv-k">Frame</span><span class="kv-v">ASCII · newline-terminated</span></div>
-          <div class="kv"><span class="kv-k">Wiring</span><span class="kv-v">STM32 TX → Heltec RX · common GND</span></div>
-          <div class="kv"><span class="kv-k">Rate</span><span class="kv-v">1 frame / 2 s</span></div>
-        </div>
-      </div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Explain why the frame is text, not binary.</strong> "The STM32 firmware does one job well: turn measurements into a simple, testable frame." Walk the loop: "It initialises peripherals, configures the RTD interface, reads temperature, converts resistance to degrees using the standard Callendar–Van Dusen model, formats a payload, sends it on UART, and repeats every two seconds."
-      Point at the terminal: "And here's the key design choice — the frame is plain ASCII, like 'T1 colon 25.75'. A binary frame would be smaller, but text means the exact same line can be read with a plain serial terminal at every stage of the chain, with no special decoder. That single decision makes the whole system debuggable."
-      Mention the validation discipline: "Before trusting it on live heating, I validate the temperature conversion against a known resistor — so a sensor or maths error can never be mistaken for a radio fault later." Cover the link facts quickly: 115200 baud, 8N1, STM32 transmit to Heltec receive, sharing a common ground.
-      <em>Transition:</em> "Now that frame leaves the wire and goes wireless."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 9 — LoRa CHAIN ============ -->
-  <section class="slide" data-time="61" data-stage="5" aria-label="LoRa communication chain">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">16 · LoRa communication chain — Layer 5</span>
-      <h2>The UART-to-LoRa bridge — going wireless at 868 MHz</h2>
-    </header>
-
-    <div class="lora-stage reveal" style="--i:1">
-      <div class="lora-node tx">
-        <span class="ln-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chip"/></svg></span>
-        <b>STM32</b><span>UART frame in</span>
-      </div>
-      <span class="lora-wire" aria-hidden="true"><i></i></span>
-      <div class="lora-node bridge">
-        <span class="ln-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg></span>
-        <b>Heltec Wireless Stick</b><span>ESP32 + SX1276</span>
-      </div>
-      <div class="rf-gap" aria-hidden="true">
-        <div class="waves"><span></span><span></span><span></span></div>
-        <span class="rf-tag">868 MHz · SF7 · raw LoRa</span>
-      </div>
-      <div class="lora-node rx">
-        <span class="ln-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-antenna"/></svg></span>
-        <b>Receiver / Gateway</b><span>2nd Heltec or ChirpStack</span>
-      </div>
-    </div>
-
-    <div class="card-grid four">
-      <article class="card sm reveal" style="--i:2"><h3>Frequency band</h3><p>868 MHz — EU863-870 bench configuration.</p></article>
-      <article class="card sm reveal" style="--i:3"><h3>Spreading factor</h3><p>SF7 — low-latency, short-range bench link.</p></article>
-      <article class="card sm reveal" style="--i:4"><h3>Mode</h3><p>Raw LoRa for proof-of-concept — not LoRaWAN yet.</p></article>
-      <article class="card sm reveal" style="--i:5"><h3>Match on both ends</h3><p>Frequency, bandwidth, SF, coding rate &amp; sync word.</p></article>
-    </div>
-    <p class="caption reveal" style="--i:6">The Heltec prints the received STM32 line to its serial monitor <em>before</em> transmitting — so the UART hand-off can be confirmed independently of the RF link.</p>
-    <aside class="notes" hidden>
-      <strong>Demystify the wireless hop.</strong> "The Heltec Wireless Stick is a small module combining an ESP32 with an SX1276 LoRa radio. It acts as a bridge: it takes the STM32's text line over UART, and re-transmits the exact same line over LoRa at 868 megahertz." Gesture along the stage diagram left to right as you say it.
-      Explain the parameters without jargon overload: "I'm using spreading factor seven for a fast, short-range bench link, and I'm running raw LoRa — not the full LoRaWAN network protocol yet — because raw LoRa is enough to prove the payload path before adding a gateway and a backend." Stress matching: "Both radios must agree on frequency, bandwidth, spreading factor, coding rate, and sync word — if any one differs, nothing is received. That's the most common cause of a silent link."
-      Point to the caption — this is the clever bit: "The Heltec prints the received line to its own serial monitor before it transmits. So if I see the line there but not at the receiver, I instantly know the problem is the radio, not the UART wiring."
-      <em>Transition:</em> "And finally, the receiver hands the data to a GUI."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 10 — GUI ============ -->
-  <section class="slide" data-time="61" data-stage="7" aria-label="GUI and received data">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">17 · GUI &amp; received data — Layer 6</span>
-      <h2>Where the telemetry becomes visible</h2>
-      <span class="tbc-badge">Live demonstration video · dashboard layout is conceptual (matches the report's defined fields)</span>
-    </header>
-    <div class="gui-demo reveal" style="--i:1">
-      <!-- LEFT: live system demonstration video — local MP4 for reliable GitHub playback -->
-      <figure class="demo-video">
-        <div class="dv-frame local-video-frame" id="dvFrame">
-          <video id="demoVideo" class="dv-local-video" controls playsinline preload="metadata" poster="https://i.ytimg.com/vi/S73wuGCyoSo/hqdefault.jpg">
-            <source src="demo_video.mp4" type="video/mp4" />
-          </video>
-          <div class="dv-video-missing" id="dvVideoMissing">
-            <span class="dv-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L19 12z"/></svg></span>
-            <span class="dv-ptitle">Add demo_video.mp4</span>
-            <span class="dv-psub">Upload the MP4 in the same folder as index.html</span>
-          </div>
-        </div>
-        <figcaption class="dv-cap"><b>Live demonstration</b> — uses a local MP4 file, so it plays inside this slide on GitHub Pages without YouTube embed errors.</figcaption>
-      </figure>
-
-      <!-- RIGHT: compact live telemetry dashboard -->
-      <div class="gui-mock demo-mock">
-        <div class="gui-top">
-          <span class="gui-title">◑ CSUG Telemetry</span>
-          <span class="gui-status"><i class="live-dot"></i> 868 MHz</span>
-        </div>
-        <div class="gui-cards demo-cards">
-          <div class="gcard"><span class="gc-k">Temp 1</span><span class="gc-v" id="gT1">25.75</span><span class="gc-u">°C</span></div>
-          <div class="gcard"><span class="gc-k">Temp 2</span><span class="gc-v dim">0.00</span><span class="gc-u">°C</span></div>
-          <div class="gcard"><span class="gc-k">RSSI</span><span class="gc-v" id="gRSSI">-74</span><span class="gc-u">dBm</span></div>
-          <div class="gcard"><span class="gc-k">SNR</span><span class="gc-v" id="gSNR">9.2</span><span class="gc-u">dB</span></div>
-          <div class="gcard"><span class="gc-k">V<sub>BAT</sub></span><span class="gc-v tbc-v">—</span><span class="gc-u">planned</span></div>
-          <div class="gcard"><span class="gc-k">V<sub>SOL</sub></span><span class="gc-v tbc-v">—</span><span class="gc-u">planned</span></div>
-          <div class="gcard"><span class="gc-k">Heater I</span><span class="gc-v tbc-v">—</span><span class="gc-u">planned</span></div>
-          <div class="gcard"><span class="gc-k">Packets</span><span class="gc-v" id="gPkt">1284</span><span class="gc-u">rx</span></div>
-        </div>
-        <div class="gui-side demo-side">
-          <span class="gs-label">Raw payload log <span class="gui-clock" id="guiClock">--:--:--</span></span>
-          <div class="gs-log" id="guiLog">
-            <div>T1:25.51,T2:0.00</div>
-            <div>T1:25.63,T2:0.00</div>
-            <div>T1:25.75,T2:0.00</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <p class="caption reveal" style="--i:2">The video shows the chain running for real; the dashboard mirrors it — parsing fields <em>and</em> preserving the raw received line so every value can be checked against the original payload. Temperature is live today; the greyed fields (battery, solar, heater current) are the planned payload expansion.</p>
-    <aside class="notes" hidden>
-      <strong>Be transparent: this is a concept, and that's appropriate.</strong> "This is the GUI layer — where the telemetry finally becomes visible. I want to be clear: this is a conceptual dashboard built to match the report's defined fields. The receiver and full GUI are partly future work, so I'm showing the design, not claiming a finished product."
-      Walk the layout: "The dashboard shows the temperature channels that are live today, plus the link-quality numbers the receiver adds — RSSI and SNR — a packet counter, and a timestamp. The greyed-out cards — battery voltage, solar voltage, heater current — are the planned payload expansion." Point to the log panel: "Crucially, the GUI keeps the raw received line in a log alongside the parsed values. That means I can always check a displayed number against the original payload — no value is ever trusted blindly."
-      Reinforce the design principle: "This mirrors how I think the final system should work — a debug layer with raw frames, timestamps, and link quality, and a clean dashboard layer for the user."
-      <em>Transition:</em> "Let me show you the actual hardware in three dimensions."
-    </aside>
-  </section>
-
-<!-- ============ SLIDE 12 — HARDWARE INTEGRATION ============ -->
-  <section class="slide" data-time="55" data-stage="all" aria-label="Hardware integration">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">18 · Hardware integration</span>
-      <h2>Bringing the boards together — safely, in order</h2>
-    </header>
-    <div class="integ">
-      <div class="integ-stack reveal" style="--i:1">
-        <div class="stk stk-gui"><span class="stk-t">GUI / Receiver</span><span class="stk-c">USB / radio link</span></div>
-        <span class="stk-conn"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg> 868 MHz LoRa</span>
-        <div class="stk stk-rf"><span class="stk-t">Heltec Wireless Stick</span><span class="stk-c">UART header · common GND</span></div>
-        <span class="stk-conn">UART 115200</span>
-        <div class="stk stk-thc"><span class="stk-t">THC board + STM32</span><span class="stk-c">sensors · heaters</span></div>
-        <span class="stk-conn">PC/104-style stack · 3.3 V / 5 V / GND</span>
-        <div class="stk stk-eps"><span class="stk-t">EPS board</span><span class="stk-c">BQ25798 power path</span></div>
-        <span class="stk-conn">P1 solar · VIN1</span>
-        <div class="stk stk-solar"><span class="stk-t">Solar array (2S2P)</span><span class="stk-c">≈ 4.2 V / 3 A</span></div>
-      </div>
-      <div class="integ-body">
-        <p class="body-lead reveal" style="--i:2">Integration follows one rule: <strong>each stage must produce a measurable output before the next is connected.</strong></p>
-        <ol class="seq reveal" style="--i:3">
-          <li>Verify solar array I–V on the bench</li>
-          <li>Bring up EPS with current limits — confirm SYS, 3.3 V, 5 V <em>unloaded</em></li>
-          <li>Stack the THC board with heaters disabled</li>
-          <li>Confirm STM32 boots and prints a valid UART frame</li>
-          <li>Add the Heltec bridge — match RF, confirm receiver</li>
-          <li>Only then: enable heaters with measured current limits</li>
-        </ol>
-      </div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Show disciplined, staged assembly.</strong> "Physically, the system stacks from the bottom up — the solar array feeds the EPS, the EPS feeds the THC board through a PC/104-style stack connector carrying the rails and ground, the Heltec connects to the THC over a UART header sharing a common ground, and the receiver and GUI close the loop over the air."
-      The point to hammer: "But I never just plug it all in. The integration rule is that each stage must produce a measurable output before I connect the next one." Walk the numbered sequence quickly: characterise the solar array first; bring up the EPS with current limits and confirm the rails with nothing loading them; stack the THC with heaters off; confirm the STM32 boots and prints a good frame; add the radio and match settings; and only at the very end enable heaters, with measured current limits.
-      Land the why: "This ordering means that if something fails, I know it was the thing I just added — the failure can't hide behind five other unverified stages."
-      <em>Transition:</em> "That staged approach leads directly into how I test and validate the whole chain."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 13 — TESTING & VALIDATION ============ -->
-  <section class="slide" data-time="62" data-stage="all" aria-label="Testing and validation">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">19 · Testing &amp; validation</span>
-      <h2>The four-point rule — one frame, checked everywhere</h2>
-    </header>
-    <p class="lead center reveal" style="--i:1">A telemetry frame is only valid when the <strong>identical payload</strong> appears at all four observation points.</p>
-    <div class="four-point reveal" style="--i:2">
-      <div class="fp fp-data">
-        <span class="fp-n">1</span><b>STM32 UART</b>
-        <code>T1:25.75,T2:0.00</code>
-        <span class="fp-d">Sensor + firmware OK</span>
-      </div>
-      <span class="fp-eq">=</span>
-      <div class="fp fp-rf">
-        <span class="fp-n">2</span><b>Heltec TX log</b>
-        <code>T1:25.75,T2:0.00</code>
-        <span class="fp-d">UART hand-off OK</span>
-      </div>
-      <span class="fp-eq">=</span>
-      <div class="fp fp-rf2">
-        <span class="fp-n">3</span><b>LoRa RX log</b>
-        <code>T1:25.75,T2:0.00</code>
-        <span class="fp-d">RF link OK</span>
-      </div>
-      <span class="fp-eq">=</span>
-      <div class="fp fp-gui">
-        <span class="fp-n">4</span><b>GUI display</b>
-        <code>T1:25.75,T2:0.00</code>
-        <span class="fp-d">Parser OK</span>
-      </div>
-    </div>
-    <div class="test-foot reveal" style="--i:3">
-      <div class="tf-item"><span class="tf-ic">✓</span> Any mismatch localises the fault instantly — formatting, transmission, decoding or parsing</div>
-      <div class="tf-item"><span class="tf-ic">✓</span> Acceptance: stable rails · clean STM32 boot · ≥ 1 valid temperature frame · matching RX payload · RSSI/SNR logged</div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>This is your strongest engineering idea — sell it.</strong> "My whole validation method comes down to one rule. A frame is only considered valid when the identical payload appears at four points: the STM32's UART output, the Heltec transmit log, the receiver's log, and the GUI." Point to each box as you say it, and emphasise the equals signs between them.
-      Now the payoff: "Because I compare the same line across all four, any mismatch tells me exactly where the fault is. If the STM32 is right but the Heltec is silent, it's UART wiring or baud rate. If the Heltec transmits but the receiver is silent, it's the RF settings or antenna. If the receiver is right but the GUI is wrong, it's the parser. No guesswork."
-      State acceptance criteria plainly: "I consider the demonstration successful when the rails are stable, the STM32 boots without resetting, at least one valid temperature frame is produced, the receiver shows the matching payload, and RSSI and SNR are logged. All of that is observable with normal bench tools — no special spacecraft equipment."
-      <em>Transition:</em> "Of course, getting here wasn't smooth — let me share the main challenges."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 14 — CHALLENGES ============ -->
-  <section class="slide" data-time="62" data-stage="all" aria-label="Challenges and solutions">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">20 · Challenges &amp; solutions</span>
-      <h2>Design decisions and debugging</h2>
-    </header>
-    <div class="challenge-hero reveal" style="--i:1">
-      <div class="ch-before">
-        <span class="ch-tag">BEFORE</span>
-        <b>Distributed SPV1040 charger blocks</b>
-        <span>Multiple per-panel chargers — more parts, more failure points, harder routing</span>
-      </div>
-      <span class="ch-arrow">⟶</span>
-      <div class="ch-after">
-        <span class="ch-tag ok">AFTER</span>
-        <b>One BQ25798</b>
-        <span>Single device for solar + USB-C + battery + system bus, with built-in MPPT</span>
-      </div>
-    </div>
-    <div class="card-grid three">
-      <article class="card reveal" style="--i:2"><div class="card-ic ic-amber sm"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></div><h3>VIN1 / VIN2 confusion</h3><p>Risk of cross-wiring solar and USB-C. <b>Fix:</b> labelled harnesses + continuity checks before power.</p></article>
-      <article class="card reveal" style="--i:3"><div class="card-ic ic-cyan sm"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-link"/></svg></div><h3>Silent UART link</h3><p>No frame at the Heltec. <b>Fix:</b> common ground, crossed TX/RX, confirmed 115200 baud.</p></article>
-      <article class="card reveal" style="--i:4"><div class="card-ic ic-violet sm"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg></div><h3>No LoRa packet</h3><p>Mismatched radio settings. <b>Fix:</b> match frequency, bandwidth, SF, coding rate &amp; sync word on both ends.</p></article>
-    </div>
-    <p class="caption reveal" style="--i:5">A recurring theme: the firmware temperature driver (MAX31865-style proof-of-concept) must still be aligned to the final AD7124 front-end — flagged honestly as remaining work, not hidden.</p>
-    <aside class="notes" hidden>
-      <strong>Show judgement, not just effort.</strong> "The biggest design decision was simplifying the power architecture. The earlier concept used several distributed SPV1040 charger blocks — one region per panel. That meant more components, more places to fail, and harder PCB routing. I consolidated everything onto a single BQ25798 that handles solar, USB-C, the battery, and the system bus, with MPPT built in. Fewer parts, one clear power path." Point from the BEFORE box to the AFTER box.
-      Then the debugging trio, briefly: "Three issues came up repeatedly. Cross-wiring the two charger inputs — solved with labelled harnesses and continuity checks before any power. A silent UART link — almost always a missing common ground or a baud mismatch. And a dead LoRa link — always traced to mismatched radio settings between the two ends."
-      End with honesty, which graders reward: "And I'll be straightforward about open work — my firmware temperature driver was a proof-of-concept and still needs aligning to the final AD7124 converter. I flag that rather than hide it."
-      <em>Transition:</em> "Let me put the whole thing together and show the end-to-end flow."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 15 — FINAL WORKING FLOW ============ -->
-  <section class="slide" data-time="60" data-stage="all" aria-label="Final working flow">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">21 · Final working flow</span>
-      <h2>End to end — energy in, telemetry out</h2>
-    </header>
-    <div class="flowchain final reveal" style="--i:1" id="finalChain">
-      <svg class="flow-svg" viewBox="0 0 1180 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <line class="flow-line all" x1="60" y1="75" x2="1120" y2="75"/>
-        <line class="flow-line all dash" x1="60" y1="75" x2="1120" y2="75"/>
-        <circle class="flow-dot all" r="5" cy="75"><animate attributeName="cx" from="60" to="1120" dur="2.8s" repeatCount="indefinite"/></circle>
-        <circle class="flow-dot all" r="5" cy="75"><animate attributeName="cx" from="60" to="1120" dur="2.8s" begin="0.93s" repeatCount="indefinite"/></circle>
-        <circle class="flow-dot all" r="5" cy="75"><animate attributeName="cx" from="60" to="1120" dur="2.8s" begin="1.86s" repeatCount="indefinite"/></circle>
-      </svg>
-      <div class="chain-nodes seven">
-        <div class="cnode pwr lit"><span class="cn-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="cn-t">Solar</span><span class="cn-s">harvest</span></div>
-        <div class="cnode pwr lit"><span class="cn-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="cn-t">EPS</span><span class="cn-s">3.3/5 V rails</span></div>
-        <div class="cnode mix lit"><span class="cn-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-thermo"/></svg></span><span class="cn-t">THC</span><span class="cn-s">measure</span></div>
-        <div class="cnode data lit"><span class="cn-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chip"/></svg></span><span class="cn-t">STM32</span><span class="cn-s">frame</span></div>
-        <div class="cnode rf lit"><span class="cn-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg></span><span class="cn-t">LoRa TX</span><span class="cn-s">868 MHz</span></div>
-        <div class="cnode rf lit"><span class="cn-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-antenna"/></svg></span><span class="cn-t">RX</span><span class="cn-s">decode</span></div>
-        <div class="cnode gui lit"><span class="cn-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="cn-t">GUI</span><span class="cn-s">display</span></div>
-      </div>
-    </div>
-    <div class="final-stats reveal" style="--i:2">
-      <div class="fstat"><span class="fs-v">12.6 W</span><span class="fs-k">solar input label</span></div>
-      <div class="fstat"><span class="fs-v">2</span><span class="fs-k">regulated rails (3.3 / 5 V)</span></div>
-      <div class="fstat"><span class="fs-v">868 MHz</span><span class="fs-k">LoRa uplink</span></div>
-      <div class="fstat"><span class="fs-v">4</span><span class="fs-k">checkpoints proven</span></div>
-    </div>
-    <p class="caption reveal" style="--i:3">A single coherent chain: harvested solar energy is conditioned, drives the sensing payload, and the measured values travel wirelessly to a display — exactly the integration this internship set out to prove.</p>
-    <aside class="notes" hidden>
-      <strong>This is the climax — speak with energy.</strong> "Putting it all together: harvested solar energy enters the EPS, which conditions it into clean rails. Those rails power the THC board, which measures temperature and current. The STM32 packages that into a frame, the Heltec sends it over LoRa at 868 megahertz, a receiver decodes it, and the GUI displays it." Sweep your hand across the lit chain as you say it — every stage is now glowing.
-      Hit the headline numbers on the stat row: "Roughly 12.6 watts of solar input on the label, two regulated rails, an 868-megahertz uplink, and four verification checkpoints proven across the chain."
-      Bring it home to the objective: "This is exactly what the internship set out to demonstrate — not a set of disconnected boards, but one coherent power-and-telemetry chain, end to end."
-      <em>Transition:</em> "So what did I take away from building it?"
-    </aside>
-  </section>
-
-<!-- ============ SLIDE 17 — FUTURE IMPROVEMENTS ============ -->
-  <section class="slide" data-time="45" data-stage="all" aria-label="Future improvements">
-    <header class="slide-head reveal" style="--i:0">
-      <span class="kicker">22 · Future improvements</span>
-      <h2>From proof-of-concept to validated platform</h2>
-    </header>
-    <div class="roadmap">
-      <div class="rm reveal" style="--i:1"><span class="rm-n">1</span><div><b>EPS bring-up &amp; solar I–V</b><span>Measure real panel curves under controlled illumination</span></div></div>
-      <div class="rm reveal" style="--i:2"><span class="rm-n">2</span><div><b>Power-path validation</b><span>Confirm MPPT, charging, SYS-bus behaviour &amp; converter efficiency</span></div></div>
-      <div class="rm reveal" style="--i:3"><span class="rm-n">3</span><div><b>Payload expansion</b><span>Add V<sub>BAT</sub>, V<sub>SOL</sub>, I<sub>SOL</sub>, heater current, RSSI, SNR to the frame</span></div></div>
-      <div class="rm reveal" style="--i:4"><span class="rm-n">4</span><div><b>Second temperature channel</b><span>Re-enable dual-RTD acquisition &amp; GUI decoding</span></div></div>
-      <div class="rm reveal" style="--i:5"><span class="rm-n">5</span><div><b>GUI / backend completion</b><span>Raw-payload log, trend plots, packet counter, link-quality view</span></div></div>
-      <div class="rm reveal" style="--i:6"><span class="rm-n">6</span><div><b>LoRaWAN / ChirpStack</b><span>Migrate raw LoRa to a registered LoRaWAN uplink + decoder</span></div></div>
-      <div class="rm reveal" style="--i:7"><span class="rm-n">7</span><div><b>Firmware alignment &amp; endurance</b><span>Align driver to AD7124 front-end · long-duration solar/battery test</span></div></div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Show a clear, prioritised path forward.</strong> "The current platform is a proof-of-concept with a defined route to a validated system. The priorities are, in order:" Move through the roadmap efficiently — you don't need to dwell: "First, bring up the EPS and actually measure the solar I–V curves under controlled light. Second, validate the power path — MPPT, charging, the system bus, and efficiency. Third, expand the telemetry frame to carry battery and solar voltage, currents, and link quality. Fourth, re-enable the second temperature channel. Fifth, finish the GUI with trend plots and logging. Sixth, migrate from raw LoRa to a proper LoRaWAN uplink through ChirpStack. And seventh, align the firmware to the final ADC and run a long-duration endurance test on solar and battery."
-      One sentence to close it: "Completing these turns today's bench demonstration into a fully autonomous, multi-sensor telemetry node for CubeSat ground validation at CSUG."
-      <em>Transition:</em> "Let me summarise and open it up for questions."
-    </aside>
-  </section>
-
-  <!-- ============ SLIDE 18 — CONCLUSION & Q&A ============ -->
-  <section class="slide slide--end" data-time="45" data-stage="all" aria-label="Conclusion and Q&A">
-    <div class="end-wrap">
-      <span class="eyebrow reveal" style="--i:0">Conclusion</span>
-      <h2 class="reveal" style="--i:1">A complete, traceable, solar-powered<br><span class="grad">telemetry chain — built end to end.</span></h2>
-      <div class="end-points reveal" style="--i:2">
-        <div class="ep"><span class="ep-ic ic-amber"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></span>Solar harvesting → BQ25798 power management → clean 3.3 V / 5 V rails</div>
-        <div class="ep"><span class="ep-ic ic-cyan"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chip"/></svg></span>STM32 acquisition, RTD conversion &amp; readable UART telemetry frames</div>
-        <div class="ep"><span class="ep-ic ic-violet"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg></span>868 MHz LoRa uplink verified at four independent checkpoints</div>
-      </div>
-      <div class="thanks reveal" style="--i:3">
-        <span class="thanks-q">Thank you — questions welcome</span>
-        <span class="thanks-ack">With thanks to Frédéric Martin, Lian-Corelli Apostol &amp; the CSUG team · Université Grenoble Alpes</span>
-      </div>
-      <div class="title-chain end reveal" style="--i:4" aria-hidden="true">
-        <span class="tc tc--pwr">Solar</span><span class="tc-arr">→</span>
-        <span class="tc tc--pwr">EPS</span><span class="tc-arr">→</span>
-        <span class="tc tc--data">THC</span><span class="tc-arr">→</span>
-        <span class="tc tc--data">STM32</span><span class="tc-arr">→</span>
-        <span class="tc tc--rf">LoRa</span><span class="tc-arr">→</span>
-        <span class="tc tc--rf">RX</span><span class="tc-arr">→</span>
-        <span class="tc tc--gui">GUI</span>
-      </div>
-    </div>
-    <aside class="notes" hidden>
-      <strong>Close with calm confidence, then invite questions.</strong> "To summarise: I designed and integrated a complete, traceable, solar-powered telemetry chain — end to end. Solar harvesting feeds a BQ25798 power system that produces clean rails; the STM32 acquires temperature, converts it, and formats readable telemetry; and that telemetry travels over an 868-megahertz LoRa link that I verify at four independent checkpoints."
-      State your contribution clearly — say it out loud: "My main contribution wasn't just individual schematics — it was defining and proving how energy, data, and RF telemetry move across the whole system as one coherent platform."
-      Then thank people and hand over: "Thank you to my supervisors, Frédéric Martin and Lian-Corelli Apostol, and the whole CSUG team. I'd be glad to take your questions." Then stop talking and wait.
-      <em>Likely questions to prepare:</em> Why LoRa over Wi-Fi or BLE? (range and low power). Why text frames over binary? (debuggability at every stage). Why one BQ25798? (fewer parts, single power path, built-in MPPT). What's the real solar power vs the 12.6-watt label? (label only — needs I–V measurement; that's future work item one). MAX31865 vs AD7124? (firmware proof-of-concept vs final board front-end; alignment is planned).
-    </aside>
-  </section>
-
-</main>
-
-<!-- footer HUD -->
-<footer class="hud" aria-hidden="true">
-  <div class="hud-left">
-    <span class="hud-dot"></span>CSUG · LoRa Telemetry — EPS &amp; THC
-  </div>
-  <div class="hud-chain" id="hudChain">
-    <span class="hc" data-stage="1" title="Solar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg></span>
-    <span class="hc" data-stage="2" title="EPS"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></span>
-    <span class="hc" data-stage="3" title="THC"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-thermo"/></svg></span>
-    <span class="hc" data-stage="4" title="STM32"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chip"/></svg></span>
-    <span class="hc" data-stage="5" title="LoRa"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg></span>
-    <span class="hc" data-stage="7" title="GUI"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-monitor"/></svg></span>
-  </div>
-  <div class="hud-right">
-    <span id="slideCounter">01 / 22</span>
-  </div>
-</footer>
-
-<!-- nav arrows -->
-<button class="nav-arrow prev" id="navPrev" aria-label="Previous slide">‹</button>
-<button class="nav-arrow next" id="navNext" aria-label="Next slide">›</button>
-
-<div class="img-lightbox" id="imgLightbox" aria-hidden="true" role="dialog" aria-label="Enlarged diagram">
-  <button class="lb-close" id="lbClose" aria-label="Close enlarged diagram">×</button>
-  <div class="lb-panel">
-    <div class="lb-title" id="lbTitle">Diagram</div>
-    <img id="lbImg" src="" alt="Enlarged diagram" />
-    <div class="lb-hint">Click outside or press Esc to close</div>
-  </div>
+</section>
+<!-- ============ SLIDE 4 — ARCHITECTURE ============ -->
+<section aria-label="High-level architecture" class="slide" data-stage="all" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">03 · High-level architecture</span>
+<h2>Six layers · the power path and the data path, side by side</h2>
+</header>
+<div class="arch reveal" style="--i:1">
+<div class="arch-rail arch-pwr">
+<div class="rail-label"><span class="dot dot-amber"></span>ENERGY PATH</div>
+<div aria-hidden="true" class="rail-flow"><span></span></div>
+<ul class="rail-steps">
+<li><b>Energy source</b><span>Solar board — AZUR SPACE 3G30A cells + sun sensors</span></li>
+<li><b>Power management</b><span>EPS — BQ25798 power path, battery charge, rail generation</span></li>
+<li><b>Regulated rails</b><span>3.3 V (logic) &amp; 5 V (heaters/load) to the THC board</span></li>
+</ul>
+</div>
+<div class="arch-rail arch-data">
+<div class="rail-label"><span class="dot dot-cyan"></span>DATA PATH</div>
+<div aria-hidden="true" class="rail-flow data"><span></span></div>
+<ul class="rail-steps">
+<li><b>Measurement &amp; control</b><span>THC — RTD temperature, INA3221 current, heater logic</span></li>
+<li><b>Embedded controller</b><span>STM32L432KC — acquire, convert, format UART frames</span></li>
+<li><b>Wireless link &amp; backend</b><span>Heltec SX1276 → 868 MHz LoRa → receiver → GUI / ChirpStack</span></li>
+</ul>
+</div>
+</div>
+<div class="why-fault reveal" style="--i:2">
+<span class="wf-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-search"></use></svg></span>
+<div><b>Why layers?</b> Fault isolation. If a temperature value never reaches the GUI, I check the chain in order — EPS rails → THC supply pins → STM32 UART → Heltec serial log → RF link → GUI parser — so debugging never becomes guesswork across power, firmware and RF at the same time.</div>
 </div>
 
+</section>
+<!-- ============ SLIDE 4b — WHAT MAKES THIS APPROACH DIFFERENT (CDC guideline: "how is your approach different?") ============ -->
+<section aria-label="What makes this approach different" class="slide" data-stage="all" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">04 · What makes this approach different</span>
+<h2>Not six separate boards — one chain, proven as a whole</h2>
+<p class="lead">Most CubeSat subsystems are built and tested in isolation. This platform is deliberately the opposite — that is its contribution.</p>
+</header>
+<div class="card-grid four">
+<article class="card reveal" style="--i:1">
+<div class="card-ic ic-amber"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-layers"></use></svg></div>
+<h3>Whole chain, not piece-parts</h3>
+<p>Solar → power → sensing → MCU → RF → GUI is built and bench-validated as <b>one</b> platform — so integration faults surface here, not in flight.</p>
+</article>
+<article class="card reveal" style="--i:2">
+<div class="card-ic ic-cyan"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-target"></use></svg></div>
+<h3>Observable at every stage</h3>
+<p>The same payload is verified at <b>four independent checkpoints</b>; readable UART / LoRa frames make every hop debuggable instead of a black box.</p>
+</article>
+<article class="card reveal" style="--i:3">
+<div class="card-ic ic-violet"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-bolt"></use></svg></div>
+<h3>One consolidated power path</h3>
+<p>A single <b>BQ25798</b> replaces distributed per-panel chargers — solar + USB-C + battery + system bus + built-in MPPT. Fewer parts, fewer failure points, simpler routing.</p>
+</article>
+<article class="card reveal" style="--i:4">
+<div class="card-ic ic-green"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-search"></use></svg></div>
+<h3>Honest about open work</h3>
+<p>Remaining tasks — AD7124 firmware alignment and real solar I–V measurement — are <b>flagged on the slides</b>, not hidden.</p>
+</article>
+</div>
+<div class="pull reveal" style="--i:5">
+<span class="pull-mark">“</span>
+      The contribution isn’t a stack of separate schematics — it’s defining and proving how <strong>energy, data and RF telemetry move across the whole system as one coherent, traceable platform.</strong>
+</div>
+
+</section>
+<!-- ============ SLIDE 5 — SOLAR BOARD ============ -->
+<!-- ============ Solar — design flowchart ============ -->
+<section aria-label="Solar panel board flow" class="slide" data-stage="1" data-time="60">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">05 · Solar panel board · Layer 1 — design flow</span>
+<h2>Harvesting the photovoltaic input</h2>
+</header>
+<div class="split">
+<div class="split-media reveal" style="--i:1">
+<img alt="Solar board design flow: AZUR SPACE PV cells to 2.35 V bus, solar connector and sun-sensor interface" class="board-img tall zoomable-img" data-zoom-title="Solar board design flow" src="solar_flow.png"/>
+</div>
+<div class="split-body">
+<div class="spec-list">
+<div class="spec reveal" style="--i:2"><span class="spec-k">Solar cells</span><span class="spec-v">3 × AZUR SPACE 3G30A triple-junction GaAs (PV1–PV3)</span></div>
+<div class="spec reveal" style="--i:3"><span class="spec-k">Per-board label</span><span class="spec-v">2.35 V · 1.5 A <em class="tbc">design label — to be measured</em></span></div>
+<div class="spec reveal" style="--i:4"><span class="spec-k">Array → EPS</span><span class="spec-v">4 boards in 2S2P ⇒ ≈ 4.2 V / 3 A target input</span></div>
+<div class="spec reveal" style="--i:5"><span class="spec-k">Sun sensors</span><span class="spec-v">2 × TEMD6010FX01 photodiodes (D1–D2) — analog light / sun-vector</span></div>
+<div class="spec reveal" style="--i:6"><span class="spec-k">Connectors</span><span class="spec-v">P1 — solar power out · P2 — sun-sensor signals (kept separate)</span></div>
+</div>
+<div aria-label="2S2P wiring concept" class="mini-2s2p reveal" style="--i:7">
+<div class="ms-col"><span class="ms-cell">Panel</span><span class="ms-link">series</span><span class="ms-cell">Panel</span></div>
+<div class="ms-col"><span class="ms-cell">Panel</span><span class="ms-link">series</span><span class="ms-cell">Panel</span></div>
+<span class="ms-arrow">∥ parallel →</span>
+<span class="ms-out">EPS input ≈ 4.2 V / 3 A</span>
+</div>
+</div>
+</div>
+
+</section>
+<!-- ============ Solar — animated functional flowchart ============ -->
+<section aria-label="Solar board animated flow" class="slide" data-stage="1" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">06 · Solar panel board · Layer 1 — animated signal flow</span>
+<h2>From sunlight to the EPS input</h2>
+</header>
+<div class="powerflow reveal" style="--i:1">
+<svg aria-label="Solar board functional flow diagram" preserveAspectRatio="xMidYMid meet" role="img" viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g class="pf-wires">
+<path class="pf-base" d="M210,112 L285,112"></path><path class="pf-dash" d="M210,112 L285,112" id="sf1"></path>
+<path class="pf-base" d="M445,112 L520,112"></path><path class="pf-dash" d="M445,112 L520,112" id="sf2"></path>
+<path class="pf-base" d="M680,112 L755,112"></path><path class="pf-dash" d="M680,112 L755,112" id="sf3"></path>
+<path class="pf-base" d="M915,112 L990,112"></path><path class="pf-dash" d="M915,112 L990,112" id="sf4"></path>
+<path class="pf-base" d="M245,308 L320,308"></path><path class="pf-dash c" d="M245,308 L320,308" id="sf5"></path>
+<path class="pf-base" d="M480,308 L555,308"></path><path class="pf-dash c" d="M480,308 L555,308" id="sf6"></path>
+<path class="pf-base" d="M715,308 L790,308"></path><path class="pf-dash c" d="M715,308 L790,308" id="sf7"></path>
+<circle class="pf-dot" r="5"><animateMotion dur="1.0s" repeatCount="indefinite"><mpath href="#sf1" xlink:href="#sf1"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="5"><animateMotion begin="0.25s" dur="1.0s" repeatCount="indefinite"><mpath href="#sf2" xlink:href="#sf2"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="5"><animateMotion begin="0.5s" dur="1.0s" repeatCount="indefinite"><mpath href="#sf3" xlink:href="#sf3"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="5"><animateMotion begin="0.75s" dur="1.0s" repeatCount="indefinite"><mpath href="#sf4" xlink:href="#sf4"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="5"><animateMotion dur="1.1s" repeatCount="indefinite"><mpath href="#sf5" xlink:href="#sf5"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="5"><animateMotion begin="0.35s" dur="1.1s" repeatCount="indefinite"><mpath href="#sf6" xlink:href="#sf6"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="5"><animateMotion begin="0.7s" dur="1.1s" repeatCount="indefinite"><mpath href="#sf7" xlink:href="#sf7"></mpath></animateMotion></circle>
+</g>
+<text class="pf-lane amber" x="70" y="44">Power path</text>
+<text class="pf-lane data" x="70" y="238">Sun-sensor path</text>
+<g class="pf-node amber"><rect height="88" rx="13" width="170" x="40" y="68"></rect><text class="pf-t sm" x="125" y="100">3× AZUR SPACE</text><text class="pf-s" x="125" y="120">3G30A GaAs cells</text><text class="pf-s" x="125" y="139">PV1 · PV2 · PV3</text></g>
+<g class="pf-node amber"><rect height="64" rx="12" width="160" x="285" y="80"></rect><text class="pf-t sm" x="365" y="106">2S2P wiring</text><text class="pf-s" x="365" y="125">2 series · 2 parallel</text></g>
+<g class="pf-node amber"><rect height="64" rx="12" width="160" x="520" y="80"></rect><text class="pf-t sm" x="600" y="106">Solar bus</text><text class="pf-s" x="600" y="125">≈ 4.2 V / 3 A</text></g>
+<g class="pf-node amber"><rect height="64" rx="12" width="160" x="755" y="80"></rect><text class="pf-t sm" x="835" y="106">Connector P1</text><text class="pf-s" x="835" y="125">power output</text></g>
+<g class="pf-node amber"><rect height="64" rx="12" width="170" x="990" y="80"></rect><text class="pf-t sm" x="1075" y="106">EPS input</text><text class="pf-s" x="1075" y="125">→ BQ25798 charger</text></g>
+<g class="pf-node data"><rect height="88" rx="13" width="205" x="40" y="264"></rect><text class="pf-t sm" x="142" y="296">2× TEMD6010</text><text class="pf-s" x="142" y="316">Si photodiodes</text><text class="pf-s" x="142" y="335">sun sensors D1 · D2</text></g>
+<g class="pf-node data"><rect height="64" rx="12" width="160" x="320" y="276"></rect><text class="pf-t sm" x="400" y="302">Sun-vector</text><text class="pf-s" x="400" y="321">analog light level</text></g>
+<g class="pf-node data"><rect height="64" rx="12" width="160" x="555" y="276"></rect><text class="pf-t sm" x="635" y="302">Connector P2</text><text class="pf-s" x="635" y="321">signals output</text></g>
+<g class="pf-node data"><rect height="64" rx="12" width="220" x="790" y="276"></rect><text class="pf-t sm" x="900" y="302">OBC / EPS interface</text><text class="pf-s" x="900" y="321">attitude estimate · MPPT hint</text></g>
+</svg>
+</div>
+<div class="pf-eqn reveal" style="--i:2">
+<span class="pe-l">Two outputs, one board</span>
+<code>P1 = power → EPS  ·  P2 = sun-vector → OBC</code>
+<span class="pe-n">Power and sun-sensor signals are kept on separate connectors so the high-current path can be validated independently. The per-board <em class="tbc">2.35 V / 1.5 A is a design label to be measured</em>; the array target is reached by the 2S2P configuration.</span>
+</div>
+
+</section>
+<!-- ============ Solar — PCB & interactive 3D ============ -->
+<section aria-label="Solar board PCB and 3D" class="slide slide--board" data-stage="1" data-time="55">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">07 · Solar panel board · Layer 1 — board realization</span>
+<h2>From schematic to a physical board</h2>
+</header>
+<div class="board-duo">
+<div class="board-cell reveal" style="--i:1">
+<div class="board-frame"><img alt="Solar panel PCB layout, three solar-cell footprints" src="solar_board.png"/></div>
+<span class="board-cap"><b>PCB layout</b> · Ver_01 — cell placement &amp; routing</span>
+</div>
+<div class="board-cell reveal" style="--i:2">
+<div class="viewer" data-fallback="solar_board.png" data-model-key="solar" id="viewerSolar">
+<div class="viewer-fallback"><img alt="Solar panel board" src="solar_board.png"/></div>
+<div class="viewer-loading">Loading 3D model…</div>
+</div>
+<span class="board-cap"><b>Interactive 3D</b> · drag to rotate · scroll to zoom</span>
+</div>
+</div>
+<p class="caption reveal" style="--i:3">The same design as a manufactured board (left) and a rotatable 3D model (right) — used to check cell placement, connector orientation, and how the board stacks in the assembly.</p>
+
+</section>
+<!-- ============ SLIDE 6 — EPS BOARD ============ -->
+<section aria-label="EPS board" class="slide" data-stage="2" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">08 · EPS board — Layer 2</span>
+<h2>Electrical Power System — one BQ25798 manages everything</h2>
+</header>
+<div class="split wide-media">
+<div class="split-media reveal" style="--i:1">
+<img alt="EPS power architecture using a single BQ25798 for solar, USB-C, battery and system bus" class="board-img zoomable-img" data-zoom-title="EPS power architecture" src="eps_diagram.png"/>
+</div>
+<div class="split-body">
+<p class="body-lead reveal" style="--i:2">The charger sits between four sources and loads: solar in, USB-C in, battery, and the system bus that powers the rest of the platform.</p>
+<div class="chip-row reveal" style="--i:3">
+<span class="chip chip-amber">VIN1 ← Solar</span>
+<span class="chip chip-blue">VIN2 ← USB-C</span>
+<span class="chip chip-green">BAT — 1S Li-ion</span>
+<span class="chip chip-cyan">SYS bus</span>
+<span class="chip">3.3 V rail</span>
+<span class="chip">5 V rail</span>
+</div>
+<div class="ic-list reveal" style="--i:4">
+<div class="icl"><b>BQ25798</b> dual-input buck-boost charger · MPPT · USB-PD power path</div>
+<div class="icl"><b>INA260</b> solar-bus power &amp; current monitor (I²C)</div>
+<div class="icl"><b>LTC4352</b> ideal-diode / power-path lane protection</div>
+<div class="icl"><b>BQ27441</b> battery fuel gauge (state-of-charge)</div>
+<div class="icl"><b>AP50N04QD ×2</b> input MOSFETs for VIN1 / VIN2 lanes</div>
+</div>
+<div class="rule-callout reveal" style="--i:5">
+<span class="rc-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-warn"></use></svg></span>
+<div><b>Golden rules.</b> Solar only on VIN1, USB-C only on VIN2 — never both on one input. A regulated rail is never wired to the battery port; charging stays under BQ25798 control. The THC board is connected only after rails are verified.</div>
+</div>
+</div>
+</div>
+
+</section>
+<!-- ============ Power system — end-to-end animated flow ============ -->
+<section aria-label="Power system flow" class="slide" data-stage="2" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">09 · Power system · Layer 2 — energy distribution</span>
+<h2>The complete power path — source to regulated rails</h2>
+</header>
+<div class="powerflow reveal" style="--i:1">
+<svg aria-label="Power system flow diagram" preserveAspectRatio="xMidYMid meet" role="img" viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<filter height="220%" id="pfGlow" width="220%" x="-60%" y="-60%">
+<feGaussianBlur result="b" stddeviation="3"></feGaussianBlur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+</defs>
+<g class="pf-wires">
+<path class="pf-base" d="M200,99 L250,99"></path><path class="pf-dash" d="M200,99 L250,99" id="pf1"></path>
+<path class="pf-base" d="M390,99 L430,99 L430,170 L470,170"></path><path class="pf-dash" d="M390,99 L430,99 L430,170 L470,170" id="pf2"></path>
+<path class="pf-base" d="M200,328 L250,328"></path><path class="pf-dash b" d="M200,328 L250,328" id="pf3"></path>
+<path class="pf-base" d="M390,328 L430,328 L430,220 L470,220"></path><path class="pf-dash b" d="M390,328 L430,328 L430,220 L470,220" id="pf4"></path>
+<path class="pf-base" d="M590,270 L590,326"></path><path class="pf-dash g" d="M590,270 L590,326" id="pf5"></path>
+<path class="pf-base" d="M710,196 L780,196"></path><path class="pf-dash" d="M710,196 L780,196" id="pf6"></path>
+<path class="pf-base" d="M940,196 L960,196 L960,111 L980,111"></path><path class="pf-dash" d="M940,196 L960,196 L960,111 L980,111" id="pf7"></path>
+<path class="pf-base" d="M940,196 L960,196 L960,281 L980,281"></path><path class="pf-dash" d="M940,196 L960,196 L960,281 L980,281" id="pf8"></path>
+<circle class="pf-dot" r="4"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#pf1" xlink:href="#pf1"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="4"><animateMotion dur="2.0s" repeatCount="indefinite"><mpath href="#pf2" xlink:href="#pf2"></mpath></animateMotion></circle>
+<circle class="pf-dot b" r="4"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#pf3" xlink:href="#pf3"></mpath></animateMotion></circle>
+<circle class="pf-dot b" r="4"><animateMotion dur="2.0s" repeatCount="indefinite"><mpath href="#pf4" xlink:href="#pf4"></mpath></animateMotion></circle>
+<circle class="pf-dot g" r="4"><animateMotion calcMode="linear" dur="2.2s" keyPoints="0;1;0" keyTimes="0;0.5;1" repeatCount="indefinite"><mpath href="#pf5" xlink:href="#pf5"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="4"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#pf6" xlink:href="#pf6"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="4"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath href="#pf7" xlink:href="#pf7"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="4"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#pf8" xlink:href="#pf8"></mpath></animateMotion></circle>
+</g>
+<g class="pf-node amber"><rect height="78" rx="12" width="170" x="30" y="60"></rect><text class="pf-t" x="115" y="94">Solar array</text><text class="pf-s" x="115" y="116">2S2P · 4.2 V / 3 A</text></g>
+<g class="pf-node blue"><rect height="72" rx="12" width="170" x="30" y="292"></rect><text class="pf-t" x="115" y="324">USB-C input</text><text class="pf-s" x="115" y="345">bench / charge</text></g>
+<g class="pf-node small"><rect height="54" rx="10" width="140" x="250" y="72"></rect><text class="pf-t sm" x="320" y="93">VIN1 protect</text><text class="pf-s" x="320" y="111">fuse · TVS · Q1</text></g>
+<g class="pf-node small"><rect height="54" rx="10" width="140" x="250" y="301"></rect><text class="pf-t sm" x="320" y="322">VIN2 protect</text><text class="pf-s" x="320" y="340">ESD · fuse · Q2</text></g>
+<g class="pf-node hub"><rect height="150" rx="14" width="240" x="470" y="120"></rect><text class="pf-t lg" x="590" y="170">BQ25798</text><text class="pf-s" x="590" y="196">dual-input buck-boost charger</text><text class="pf-s" x="590" y="218">MPPT · power path · USB-PD</text><rect class="pf-halo" height="150" rx="14" width="240" x="470" y="120"></rect></g>
+<g class="pf-node green"><rect height="72" rx="12" width="160" x="510" y="326"></rect><text class="pf-t" x="590" y="356">1S Li-ion</text><text class="pf-s" x="590" y="377">battery · BQ27441 gauge</text></g>
+<g class="pf-node cyan"><rect height="72" rx="12" width="160" x="780" y="160"></rect><text class="pf-t" x="860" y="191">SYS bus</text><text class="pf-s" x="860" y="212">system power rail</text></g>
+<g class="pf-node"><rect height="62" rx="12" width="180" x="980" y="80"></rect><text class="pf-t" x="1070" y="106">3.3 V rail</text><text class="pf-s" x="1070" y="126">STM32 · logic · sensors</text></g>
+<g class="pf-node"><rect height="62" rx="12" width="180" x="980" y="250"></rect><text class="pf-t" x="1070" y="276">5 V rail</text><text class="pf-s" x="1070" y="296">heaters · loads</text></g>
+</svg>
+</div>
+<div class="legend-row reveal" style="--i:2;justify-content:center">
+<span class="leg leg-pwr"><i></i> Solar energy</span>
+<span class="leg leg-data" style="--c:var(--blue)"><i style="background:var(--blue)"></i> USB-C input</span>
+<span class="leg leg-gui"><i></i> Battery charge / discharge</span>
+<span class="leg leg-rf" style="--c:var(--cyan)"><i style="background:var(--cyan)"></i> System bus → rails</span>
+</div>
+
+</section>
+<!-- ============ EPS — PCB & interactive 3D ============ -->
+<section aria-label="EPS board PCB and 3D" class="slide slide--board" data-stage="2" data-time="55">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">10 · EPS board · Layer 2 — board realization</span>
+<h2>The power core, as a physical board</h2>
+</header>
+<div class="board-duo">
+<div class="board-cell reveal" style="--i:1">
+<div class="board-frame"><img alt="EPS PCB layout — BQ25798 charger at centre, dual-input protection, 3.3 V / 5 V rails and the PC-104 stack header" src="eps_board.png"/></div>
+<span class="board-cap"><b>PCB layout</b> · PT-PWR-EPS-002 — BQ25798 · dual-input · PC-104 header</span>
+</div>
+<div class="board-cell reveal" style="--i:2">
+<div class="viewer" data-fallback="eps_board.png" data-model-key="eps" id="viewerEps">
+<div class="viewer-fallback"><img alt="EPS board" src="eps_board.png"/></div>
+<div class="viewer-loading">Loading 3D model…</div>
+</div>
+<span class="board-cap"><b>Interactive 3D</b> · drag to rotate · scroll to zoom</span>
+</div>
+</div>
+<p class="caption reveal" style="--i:3">The EPS as a manufactured board (left) and a rotatable 3D model (right). Everything from the power diagram lives here: the single BQ25798 charger at the centre, the two protected inputs on the edges, and the 3.3 V / 5 V rail regulators — with the PC-104 header along one edge that lets this board stack under the THC payload.</p>
+
+</section>
+<!-- ============ SLIDE 7 — THC BOARD ============ -->
+<!-- ============ THC — functional block diagram (image) ============ -->
+<section aria-label="THC board block diagram" class="slide" data-stage="3" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">11 · THC board · Layer 3 — block diagram</span>
+<h2>Thermal &amp; Heater Control — the measurement payload</h2>
+</header>
+<div class="split wide-media">
+<div class="split-media reveal" style="--i:1">
+<img alt="THC board block diagram with STM32, AD7124 ADCs, INA3221, PCF8574A and MOSFET heater drivers" class="board-img zoomable-img" data-zoom-title="THC board block diagram" src="thc_diagram.png"/>
+</div>
+<div class="split-body">
+<div class="spec-list">
+<div class="spec reveal" style="--i:2"><span class="spec-k">Controller</span><span class="spec-v">STM32L432KC (NUCLEO header) — SPI / I²C / UART / PWM</span></div>
+<div class="spec reveal" style="--i:3"><span class="spec-k">Temperature</span><span class="spec-v">PT100 RTD front-end — AD7124-4 24-bit ADC on the board; MAX31865-style in the firmware PoC <em class="tbc">final alignment to be confirmed</em></span></div>
+<div class="spec reveal" style="--i:4"><span class="spec-k">Electrical monitor</span><span class="spec-v">2 × INA3221 triple-channel current / bus-voltage monitors (I²C)</span></div>
+<div class="spec reveal" style="--i:5"><span class="spec-k">Heater drive</span><span class="spec-v">6 × SQD30N05 MOSFETs · SN74HC08 AND-gate enable logic · PCF8574A GPIO expander</span></div>
+<div class="spec reveal" style="--i:6"><span class="spec-k">Future bus</span><span class="spec-v">TCAN332 CAN transceiver — reserved for OBC integration</span></div>
+</div>
+</div>
+</div>
+
+</section>
+<!-- ============ THC — animated functional flowchart ============ -->
+<section aria-label="THC board animated flow" class="slide" data-stage="3" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">12 · THC board · Layer 3 — animated signal flow</span>
+<h2>Thermal &amp; Heater Control — sense, decide, drive</h2>
+</header>
+<div class="powerflow reveal" style="--i:1">
+<svg aria-label="THC board functional flow diagram" preserveAspectRatio="xMidYMid meet" role="img" viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<filter height="220%" id="tfGlow" width="220%" x="-60%" y="-60%">
+<feGaussianBlur result="b" stddeviation="3"></feGaussianBlur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+</defs>
+<g class="pf-wires">
+<path class="pf-base" d="M210,93 L260,93"></path><path class="pf-dash c" d="M210,93 L260,93" id="tf1"></path>
+<path class="pf-base" d="M410,93 L430,93 L430,160 L450,160"></path><path class="pf-dash c" d="M410,93 L430,93 L430,160 L450,160" id="tf2"></path>
+<path class="pf-base" d="M230,333 L350,333 L350,232 L450,232"></path><path class="pf-dash c" d="M230,333 L350,333 L350,232 L450,232" id="tf3"></path>
+<path class="pf-base" d="M560,274 L560,328"></path><path class="pf-dash c" d="M560,274 L560,328" id="tf4"></path>
+<path class="pf-base" d="M670,160 L710,160 L710,116 L740,116"></path><path class="pf-dash" d="M670,160 L710,160 L710,116 L740,116" id="tf5"></path>
+<path class="pf-base" d="M650,358 L700,358 L700,128 L740,128"></path><path class="pf-dash c" d="M650,358 L700,358 L700,128 L740,128" id="tf6"></path>
+<path class="pf-base" d="M825,146 L825,188"></path><path class="pf-dash" d="M825,146 L825,188" id="tf7"></path>
+<path class="pf-base" d="M910,219 L945,219 L945,173 L980,173"></path><path class="pf-dash" d="M910,219 L945,219 L945,173 L980,173" id="tf8"></path>
+<path class="pf-base" d="M670,232 L730,232 L730,350 L760,350"></path><path class="pf-dash v" d="M670,232 L730,232 L730,350 L760,350" id="tf9"></path>
+<circle class="pf-dot c" r="4"><animateMotion dur="1.5s" repeatCount="indefinite"><mpath href="#tf1" xlink:href="#tf1"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="4"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#tf2" xlink:href="#tf2"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="4"><animateMotion dur="2.0s" repeatCount="indefinite"><mpath href="#tf3" xlink:href="#tf3"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="4"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#tf4" xlink:href="#tf4"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="4"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#tf5" xlink:href="#tf5"></mpath></animateMotion></circle>
+<circle class="pf-dot c" r="4"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath href="#tf6" xlink:href="#tf6"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="4"><animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#tf7" xlink:href="#tf7"></mpath></animateMotion></circle>
+<circle class="pf-dot" r="4"><animateMotion dur="1.9s" repeatCount="indefinite"><mpath href="#tf8" xlink:href="#tf8"></mpath></animateMotion></circle>
+<circle class="pf-dot v" r="4"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#tf9" xlink:href="#tf9"></mpath></animateMotion></circle>
+</g>
+<g class="pf-node data"><rect height="66" rx="11" width="170" x="40" y="60"></rect><text class="pf-t" x="125" y="89">PT100 RTDs</text><text class="pf-s" x="125" y="109">9 ch · 2/4-wire</text></g>
+<g class="pf-node data"><rect height="60" rx="10" width="150" x="260" y="63"></rect><text class="pf-t sm" x="335" y="90">AD7124-4</text><text class="pf-s" x="335" y="108">24-bit Σ-Δ ADC</text></g>
+<g class="pf-node data"><rect height="66" rx="11" width="190" x="40" y="300"></rect><text class="pf-t" x="135" y="330">2× INA3221</text><text class="pf-s" x="135" y="350">current · bus V (I²C)</text></g>
+<g class="pf-node hubc"><rect height="156" rx="14" width="220" x="450" y="118"></rect><text class="pf-t lg" x="560" y="178">STM32L432KC</text><text class="pf-s" x="560" y="204">acquire · convert</text><text class="pf-s" x="560" y="224">format · drive</text><rect class="pf-haloc" height="156" rx="14" width="220" x="450" y="118"></rect></g>
+<g class="pf-node data"><rect height="60" rx="10" width="180" x="470" y="328"></rect><text class="pf-t sm" x="560" y="353">PCF8574A GPIO</text><text class="pf-s" x="560" y="371">heater enable lines</text></g>
+<g class="pf-node amber"><rect height="60" rx="11" width="170" x="740" y="86"></rect><text class="pf-t sm" x="825" y="111">Enable logic</text><text class="pf-s" x="825" y="129">SN74HC08 AND</text></g>
+<g class="pf-node amber"><rect height="62" rx="11" width="170" x="740" y="188"></rect><text class="pf-t sm" x="825" y="214">6× SQD30N05</text><text class="pf-s" x="825" y="233">N-MOSFET drivers</text></g>
+<g class="pf-node amber"><rect height="70" rx="12" width="170" x="980" y="138"></rect><text class="pf-t" x="1065" y="170">Heaters H1–H6</text><text class="pf-s" x="1065" y="190">VCC_BAT · PWM</text></g>
+<g class="pf-node rf"><rect height="60" rx="11" width="190" x="760" y="320"></rect><text class="pf-t sm" x="855" y="345">UART → Heltec</text><text class="pf-s" x="855" y="363">115200 · telemetry</text></g>
+</svg>
+</div>
+<div class="pf-eqn reveal" style="--i:2">
+<span class="pe-l">Heater safety interlock</span>
+<code>Heater ON = Enable ∧ PWM</code>
+<span class="pe-n">A channel fires only when both an enable command <em>and</em> a PWM command are high — no accidental heating on reset/boot. Final RTD front-end: AD7124 on the board; MAX31865-style in the firmware PoC <em class="tbc">(alignment to be confirmed)</em>.</span>
+</div>
+
+</section>
+<!-- ============ THC — PCB & interactive 3D ============ -->
+<section aria-label="THC board PCB and 3D" class="slide slide--board" data-stage="3" data-time="55">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">13 · THC board · Layer 3 — board realization</span>
+<h2>The measurement payload, as built</h2>
+</header>
+<div class="board-duo">
+<div class="board-cell reveal" style="--i:1">
+<div class="board-frame"><img alt="THC main board PCB layout with STM32, ADCs and MOSFET heater drivers" src="thc_board.png"/></div>
+<span class="board-cap"><b>PCB layout</b> · STM32 · AD7124 · INA3221 · 6× MOSFET drivers</span>
+</div>
+<div class="board-cell reveal" style="--i:2">
+<div class="viewer" data-fallback="thc_board.png" data-model-key="pcb" id="viewerThc">
+<div class="viewer-fallback"><img alt="THC main board" src="thc_board.png"/></div>
+<div class="viewer-loading">Loading 3D model…</div>
+</div>
+<span class="board-cap"><b>Interactive 3D</b> · drag to rotate · scroll to zoom</span>
+</div>
+</div>
+<p class="caption reveal" style="--i:3">A dense mixed-signal board: delicate RTD sensing and current monitors sit alongside six high-current heater drivers — the 3D view (right) is how I verify connector access and component clearance before assembly.</p>
+
+</section>
+<!-- ============ System integration — EPS + THC mated stack (real composed 3D) ============ -->
+<section aria-label="EPS and THC assembled into one stack" class="slide slide--board slide--assembly" data-stage="all" data-time="55">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">14 · System integration — the assembled stack</span>
+<h2>Two boards mate into one payload stack</h2>
+</header>
+<div class="asm-mate reveal" style="--i:1">
+<figure class="asm-chip">
+<div class="asm-thumb"><img alt="EPS board" src="eps_board.png"/></div>
+<figcaption><b>EPS</b><span>power core</span></figcaption>
+</figure>
+<span class="asm-op">+</span>
+<figure class="asm-chip">
+<div class="asm-thumb"><img alt="THC board" src="thc_board.png"/></div>
+<figcaption><b>THC</b><span>measurement payload</span></figcaption>
+</figure>
+<span class="asm-op asm-arrow">→</span>
+<!-- mated stack: THC physically stacked on top of EPS via the PC-104 header -->
+<figure aria-label="EPS and THC mated into one PC-104 stack" class="asm-stack">
+<div class="stack-scene">
+<div class="stack-3d">
+<div class="stack-board sb-eps">
+<img alt="EPS board — bottom of the PC-104 stack" src="eps_board.png"/>
+<span class="sb-tag">EPS · bottom</span>
+</div>
+<div class="stack-board sb-thc">
+<img alt="THC board — top of the PC-104 stack" src="thc_board.png"/>
+<span class="sb-tag">THC · top</span>
+</div>
+</div>
+</div>
+<figcaption><b>Mated stack</b><span>PC-104 header · 15.24 mm pitch</span></figcaption>
+</figure>
+</div>
+<div class="asm-viewer-wrap reveal" style="--i:2">
+<div class="viewer asm-viewer" data-compose="eps,pcb" data-fallback="eps_board.png" id="viewerAsm">
+<div class="viewer-fallback"><img alt="EPS and THC assembled stack" src="eps_board.png"/></div>
+<div class="viewer-loading">Assembling 3D stack…</div>
+</div>
+<span class="board-cap"><b>Interactive 3D — assembled stack</b> · EPS (bottom) + THC (top) · drag to rotate · scroll to zoom</span>
+</div>
+<p class="caption reveal" style="--i:3">The two boards aren't standalone — they bolt together into one CubeSat-format stack. <em>EPS on the bottom</em> pushes regulated power up through the PC-104 header; <em>THC on top</em> draws that power and returns telemetry down the same connector. The 3D view is built from both real board models, so the whole mated assembly rotates.</p>
+
+</section>
+<!-- ============ SLIDE 8 — STM32 / SCM ============ -->
+<section aria-label="STM32 controller and firmware" class="slide" data-stage="4" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">15 · STM32 / SCM interface — Layer 4</span>
+<h2>From RTD resistance to a readable telemetry frame</h2>
+</header>
+<div class="split">
+<div class="split-body">
+<div class="fw-loop reveal" style="--i:1">
+<div class="fwl"><span class="fwl-n">1</span> Init clocks &amp; peripherals (SPI / I²C / UART)</div>
+<div class="fwl"><span class="fwl-n">2</span> Configure RTD interface</div>
+<div class="fwl"><span class="fwl-n">3</span> Acquire temperature channel(s)</div>
+<div class="fwl"><span class="fwl-n">4</span> Convert resistance → °C (Callendar–Van Dusen)</div>
+<div class="fwl"><span class="fwl-n">5</span> Format ASCII payload</div>
+<div class="fwl"><span class="fwl-n">6</span> Transmit on UART, repeat every 2 s</div>
+</div>
+<div class="eqn reveal" style="--i:2">
+<span class="eqn-label">RTD model</span>
+<code>R<sub>T</sub> = R<sub>0</sub> (1 + A·T + B·T²)</code>
+<span class="eqn-note">PT100 resistance solved for temperature, then validated against a known resistor before live heating.</span>
+</div>
+<div aria-label="Animated RTD conversion example" class="rtd-example reveal" style="--i:3">
+<div class="rtd-title">One simple conversion example</div>
+<div class="rtd-steps">
+<span class="rtd-step"><b>1</b> Measured <em>R</em> = 109.63 Ω</span>
+<span class="rtd-step"><b>2</b> ΔR = 109.63 − 100 = 9.63 Ω</span>
+<span class="rtd-step"><b>3</b> T ≈ 9.63 / 0.385 = 25.0 °C</span>
+<span class="rtd-step out"><b>4</b> UART frame → T1:25.00</span>
+</div>
+</div>
+</div>
+<div class="split-body">
+<div class="terminal reveal" style="--i:4">
+<div class="term-bar"><span class="td"></span><span class="td"></span><span class="td"></span><span class="term-title">STM32 · USART2 · 115200 8N1</span></div>
+<div class="term-body">
+<div class="tline"><span class="tprompt">stm32&gt;</span> init ok — rtd1 ready</div>
+<div class="tline tx">T1:24.81,T2:0.00\r\n</div>
+<div class="tline tx">T1:25.06,T2:0.00\r\n</div>
+<div class="tline tx">T1:25.75,T2:0.00\r\n</div>
+<div class="tline cursor">T1:<span class="blink">_</span></div>
+</div>
+</div>
+<div class="kv-row reveal" style="--i:5">
+<div class="kv"><span class="kv-k">Link</span><span class="kv-v">UART · 115200 · 8N1</span></div>
+<div class="kv"><span class="kv-k">Frame</span><span class="kv-v">ASCII · newline-terminated</span></div>
+<div class="kv"><span class="kv-k">Wiring</span><span class="kv-v">STM32 TX → Heltec RX · common GND</span></div>
+<div class="kv"><span class="kv-k">Rate</span><span class="kv-v">1 frame / 2 s</span></div>
+</div>
+</div>
+</div>
+
+</section>
+<!-- ============ SLIDE 9 — LoRa CHAIN ============ -->
+<section aria-label="LoRa communication chain" class="slide" data-stage="5" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">16 · LoRa communication chain — Layer 5</span>
+<h2>The UART-to-LoRa bridge — going wireless at 868 MHz</h2>
+</header>
+<div class="lora-stage reveal" style="--i:1">
+<div class="lora-node tx">
+<span class="ln-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-chip"></use></svg></span>
+<b>STM32</b><span>UART frame in</span>
+</div>
+<span aria-hidden="true" class="lora-wire"><i></i></span>
+<div class="lora-node bridge">
+<span class="ln-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-radio"></use></svg></span>
+<b>Heltec Wireless Stick</b><span>ESP32 + SX1276</span>
+</div>
+<div aria-hidden="true" class="rf-gap">
+<div class="waves"><span></span><span></span><span></span></div>
+<span class="rf-tag">868 MHz · SF7 · raw LoRa</span>
+</div>
+<div class="lora-node rx">
+<span class="ln-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-antenna"></use></svg></span>
+<b>Receiver / Gateway</b><span>2nd Heltec or ChirpStack</span>
+</div>
+</div>
+<div class="card-grid four">
+<article class="card sm reveal" style="--i:2"><h3>Frequency band</h3><p>868 MHz — EU863-870 bench configuration.</p></article>
+<article class="card sm reveal" style="--i:3"><h3>Spreading factor</h3><p>SF7 — low-latency, short-range bench link.</p></article>
+<article class="card sm reveal" style="--i:4"><h3>Mode</h3><p>Raw LoRa for proof-of-concept — not LoRaWAN yet.</p></article>
+<article class="card sm reveal" style="--i:5"><h3>Match on both ends</h3><p>Frequency, bandwidth, SF, coding rate &amp; sync word.</p></article>
+</div>
+<p class="caption reveal" style="--i:6">The Heltec prints the received STM32 line to its serial monitor <em>before</em> transmitting — so the UART hand-off can be confirmed independently of the RF link.</p>
+
+</section>
+<!-- ============ SLIDE 10 — GUI ============ -->
+<section aria-label="GUI and received data" class="slide" data-stage="7" data-time="61">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">17 · GUI &amp; received data — Layer 6</span>
+<h2>Where the telemetry becomes visible</h2>
+<span class="tbc-badge">Live telemetry demonstration · dashboard fields aligned with the report</span>
+</header>
+<div class="gui-demo reveal" style="--i:1">
+<!-- LEFT: live system demonstration video — local MP4 for reliable GitHub playback -->
+<figure class="demo-video">
+<div class="dv-frame local-video-frame" id="dvFrame">
+<video class="dv-local-video" controls="" id="demoVideo" playsinline="" poster="https://i.ytimg.com/vi/S73wuGCyoSo/hqdefault.jpg" preload="metadata">
+<source src="demo_video.mp4" type="video/mp4"/>
+</video>
+
+<div aria-hidden="true" class="dv-youtube-fallback" id="dvYoutubeFallback">
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" data-src="https://www.youtube-nocookie.com/embed/S73wuGCyoSo?rel=0&amp;modestbranding=1&amp;playsinline=1" id="ytFallbackFrame" title="LoRa telemetry demonstration video"></iframe>
+</div>
+<div class="dv-video-missing" id="dvVideoMissing">
+<span class="dv-play"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19 12z"></path></svg></span>
+<span class="dv-ptitle">Telemetry demonstration</span>
+<span class="dv-psub">In-slide video window with live dashboard context</span>
+</div>
+</div>
+<figcaption class="dv-cap"><b>Live demonstration</b></figcaption>
+</figure>
+<!-- RIGHT: compact live telemetry dashboard -->
+<div class="gui-mock demo-mock">
+<div class="gui-top">
+<span class="gui-title">◑ CSUG Telemetry</span>
+<span class="gui-status"><i class="live-dot"></i> 868 MHz</span>
+</div>
+<div class="gui-cards demo-cards">
+<div class="gcard"><span class="gc-k">Temp 1</span><span class="gc-v" id="gT1">25.75</span><span class="gc-u">°C</span></div>
+<div class="gcard"><span class="gc-k">Temp 2</span><span class="gc-v dim">0.00</span><span class="gc-u">°C</span></div>
+<div class="gcard"><span class="gc-k">RSSI</span><span class="gc-v" id="gRSSI">-74</span><span class="gc-u">dBm</span></div>
+<div class="gcard"><span class="gc-k">SNR</span><span class="gc-v" id="gSNR">9.2</span><span class="gc-u">dB</span></div>
+<div class="gcard"><span class="gc-k">V<sub>BAT</sub></span><span class="gc-v tbc-v">—</span><span class="gc-u">planned</span></div>
+<div class="gcard"><span class="gc-k">V<sub>SOL</sub></span><span class="gc-v tbc-v">—</span><span class="gc-u">planned</span></div>
+<div class="gcard"><span class="gc-k">Heater I</span><span class="gc-v tbc-v">—</span><span class="gc-u">planned</span></div>
+<div class="gcard"><span class="gc-k">Packets</span><span class="gc-v" id="gPkt">1284</span><span class="gc-u">rx</span></div>
+</div>
+<div class="gui-side demo-side">
+<span class="gs-label">Raw payload log <span class="gui-clock" id="guiClock">--:--:--</span></span>
+<div class="gs-log" id="guiLog">
+<div>T1:25.51,T2:0.00</div>
+<div>T1:25.63,T2:0.00</div>
+<div>T1:25.75,T2:0.00</div>
+</div>
+</div>
+</div>
+</div>
+<p class="caption reveal" style="--i:2">The video shows the chain running for real; the dashboard mirrors it — parsing fields <em>and</em> preserving the raw received line so every value can be checked against the original payload. Temperature is live today; the greyed fields (battery, solar, heater current) are the planned payload expansion.</p>
+
+</section>
+<!-- ============ SLIDE 12 — HARDWARE INTEGRATION ============ -->
+<section aria-label="Hardware integration" class="slide" data-stage="all" data-time="55">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">18 · Hardware integration</span>
+<h2>Bringing the boards together — safely, in order</h2>
+</header>
+<div class="integ">
+<div class="integ-stack reveal" style="--i:1">
+<div class="stk stk-gui"><span class="stk-t">GUI / Receiver</span><span class="stk-c">USB / radio link</span></div>
+<span class="stk-conn"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-radio"></use></svg> 868 MHz LoRa</span>
+<div class="stk stk-rf"><span class="stk-t">Heltec Wireless Stick</span><span class="stk-c">UART header · common GND</span></div>
+<span class="stk-conn">UART 115200</span>
+<div class="stk stk-thc"><span class="stk-t">THC board + STM32</span><span class="stk-c">sensors · heaters</span></div>
+<span class="stk-conn">PC/104-style stack · 3.3 V / 5 V / GND</span>
+<div class="stk stk-eps"><span class="stk-t">EPS board</span><span class="stk-c">BQ25798 power path</span></div>
+<span class="stk-conn">P1 solar · VIN1</span>
+<div class="stk stk-solar"><span class="stk-t">Solar array (2S2P)</span><span class="stk-c">≈ 4.2 V / 3 A</span></div>
+</div>
+<div class="integ-body">
+<p class="body-lead reveal" style="--i:2">Integration follows one rule: <strong>each stage must produce a measurable output before the next is connected.</strong></p>
+<ol class="seq reveal" style="--i:3">
+<li>Verify solar array I–V on the bench</li>
+<li>Bring up EPS with current limits — confirm SYS, 3.3 V, 5 V <em>unloaded</em></li>
+<li>Stack the THC board with heaters disabled</li>
+<li>Confirm STM32 boots and prints a valid UART frame</li>
+<li>Add the Heltec bridge — match RF, confirm receiver</li>
+<li>Only then: enable heaters with measured current limits</li>
+</ol>
+</div>
+</div>
+
+</section>
+<!-- ============ SLIDE 13 — TESTING & VALIDATION ============ -->
+<section aria-label="Testing and validation" class="slide" data-stage="all" data-time="62">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">19 · Testing &amp; validation</span>
+<h2>The four-point rule — one frame, checked everywhere</h2>
+</header>
+<p class="lead center reveal" style="--i:1">A telemetry frame is only valid when the <strong>identical payload</strong> appears at all four observation points.</p>
+<div class="four-point reveal" style="--i:2">
+<div class="fp fp-data">
+<span class="fp-n">1</span><b>STM32 UART</b>
+<code>T1:25.75,T2:0.00</code>
+<span class="fp-d">Sensor + firmware OK</span>
+</div>
+<span class="fp-eq">=</span>
+<div class="fp fp-rf">
+<span class="fp-n">2</span><b>Heltec TX log</b>
+<code>T1:25.75,T2:0.00</code>
+<span class="fp-d">UART hand-off OK</span>
+</div>
+<span class="fp-eq">=</span>
+<div class="fp fp-rf2">
+<span class="fp-n">3</span><b>LoRa RX log</b>
+<code>T1:25.75,T2:0.00</code>
+<span class="fp-d">RF link OK</span>
+</div>
+<span class="fp-eq">=</span>
+<div class="fp fp-gui">
+<span class="fp-n">4</span><b>GUI display</b>
+<code>T1:25.75,T2:0.00</code>
+<span class="fp-d">Parser OK</span>
+</div>
+</div>
+<div class="test-foot reveal" style="--i:3">
+<div class="tf-item"><span class="tf-ic">✓</span> Any mismatch localises the fault instantly — formatting, transmission, decoding or parsing</div>
+<div class="tf-item"><span class="tf-ic">✓</span> Acceptance: stable rails · clean STM32 boot · ≥ 1 valid temperature frame · matching RX payload · RSSI/SNR logged</div>
+</div>
+
+</section>
+<!-- ============ SLIDE 14 — CHALLENGES ============ -->
+<section aria-label="Challenges and solutions" class="slide" data-stage="all" data-time="62">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">20 · Challenges &amp; solutions</span>
+<h2>Design decisions and debugging</h2>
+</header>
+<div class="challenge-hero reveal" style="--i:1">
+<div class="ch-before">
+<span class="ch-tag">BEFORE</span>
+<b>Distributed SPV1040 charger blocks</b>
+<span>Multiple per-panel chargers — more parts, more failure points, harder routing</span>
+</div>
+<span class="ch-arrow">⟶</span>
+<div class="ch-after">
+<span class="ch-tag ok">AFTER</span>
+<b>One BQ25798</b>
+<span>Single device for solar + USB-C + battery + system bus, with built-in MPPT</span>
+</div>
+</div>
+<div class="card-grid three">
+<article class="card reveal" style="--i:2"><div class="card-ic ic-amber sm"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-bolt"></use></svg></div><h3>VIN1 / VIN2 confusion</h3><p>Risk of cross-wiring solar and USB-C. <b>Fix:</b> labelled harnesses + continuity checks before power.</p></article>
+<article class="card reveal" style="--i:3"><div class="card-ic ic-cyan sm"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-link"></use></svg></div><h3>Silent UART link</h3><p>No frame at the Heltec. <b>Fix:</b> common ground, crossed TX/RX, confirmed 115200 baud.</p></article>
+<article class="card reveal" style="--i:4"><div class="card-ic ic-violet sm"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-radio"></use></svg></div><h3>No LoRa packet</h3><p>Mismatched radio settings. <b>Fix:</b> match frequency, bandwidth, SF, coding rate &amp; sync word on both ends.</p></article>
+</div>
+<p class="caption reveal" style="--i:5">A recurring theme: the firmware temperature driver (MAX31865-style proof-of-concept) must still be aligned to the final AD7124 front-end — flagged honestly as remaining work, not hidden.</p>
+
+</section>
+<!-- ============ SLIDE 15 — FINAL WORKING FLOW ============ -->
+<section aria-label="Final working flow" class="slide" data-stage="all" data-time="60">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">21 · Final working flow</span>
+<h2>End to end — energy in, telemetry out</h2>
+</header>
+<div class="flowchain final reveal" id="finalChain" style="--i:1">
+<svg aria-hidden="true" class="flow-svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1180 150">
+<line class="flow-line all" x1="60" x2="1120" y1="75" y2="75"></line>
+<line class="flow-line all dash" x1="60" x2="1120" y1="75" y2="75"></line>
+<circle class="flow-dot all" cy="75" r="5"><animate attributename="cx" dur="2.8s" from="60" repeatCount="indefinite" to="1120"></animate></circle>
+<circle class="flow-dot all" cy="75" r="5"><animate attributename="cx" begin="0.93s" dur="2.8s" from="60" repeatCount="indefinite" to="1120"></animate></circle>
+<circle class="flow-dot all" cy="75" r="5"><animate attributename="cx" begin="1.86s" dur="2.8s" from="60" repeatCount="indefinite" to="1120"></animate></circle>
+</svg>
+<div class="chain-nodes seven">
+<div class="cnode pwr lit"><span class="cn-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-sun"></use></svg></span><span class="cn-t">Solar</span><span class="cn-s">harvest</span></div>
+<div class="cnode pwr lit"><span class="cn-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-bolt"></use></svg></span><span class="cn-t">EPS</span><span class="cn-s">3.3/5 V rails</span></div>
+<div class="cnode mix lit"><span class="cn-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-thermo"></use></svg></span><span class="cn-t">THC</span><span class="cn-s">measure</span></div>
+<div class="cnode data lit"><span class="cn-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-chip"></use></svg></span><span class="cn-t">STM32</span><span class="cn-s">frame</span></div>
+<div class="cnode rf lit"><span class="cn-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-radio"></use></svg></span><span class="cn-t">LoRa TX</span><span class="cn-s">868 MHz</span></div>
+<div class="cnode rf lit"><span class="cn-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-antenna"></use></svg></span><span class="cn-t">RX</span><span class="cn-s">decode</span></div>
+<div class="cnode gui lit"><span class="cn-ic"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-monitor"></use></svg></span><span class="cn-t">GUI</span><span class="cn-s">display</span></div>
+</div>
+</div>
+<div class="final-stats reveal" style="--i:2">
+<div class="fstat"><span class="fs-v">12.6 W</span><span class="fs-k">solar input label</span></div>
+<div class="fstat"><span class="fs-v">2</span><span class="fs-k">regulated rails (3.3 / 5 V)</span></div>
+<div class="fstat"><span class="fs-v">868 MHz</span><span class="fs-k">LoRa uplink</span></div>
+<div class="fstat"><span class="fs-v">4</span><span class="fs-k">checkpoints proven</span></div>
+</div>
+<p class="caption reveal" style="--i:3">A single coherent chain: harvested solar energy is conditioned, drives the sensing payload, and the measured values travel wirelessly to a display — exactly the integration this internship set out to prove.</p>
+
+</section>
+<!-- ============ SLIDE 17 — FUTURE IMPROVEMENTS ============ -->
+<section aria-label="Future improvements" class="slide" data-stage="all" data-time="45">
+<header class="slide-head reveal" style="--i:0">
+<span class="kicker">22 · Future improvements</span>
+<h2>From proof-of-concept to validated platform</h2>
+</header>
+<div class="roadmap">
+<div class="rm reveal" style="--i:1"><span class="rm-n">1</span><div><b>EPS bring-up &amp; solar I–V</b><span>Measure real panel curves under controlled illumination</span></div></div>
+<div class="rm reveal" style="--i:2"><span class="rm-n">2</span><div><b>Power-path validation</b><span>Confirm MPPT, charging, SYS-bus behaviour &amp; converter efficiency</span></div></div>
+<div class="rm reveal" style="--i:3"><span class="rm-n">3</span><div><b>Payload expansion</b><span>Add V<sub>BAT</sub>, V<sub>SOL</sub>, I<sub>SOL</sub>, heater current, RSSI, SNR to the frame</span></div></div>
+<div class="rm reveal" style="--i:4"><span class="rm-n">4</span><div><b>Second temperature channel</b><span>Re-enable dual-RTD acquisition &amp; GUI decoding</span></div></div>
+<div class="rm reveal" style="--i:5"><span class="rm-n">5</span><div><b>GUI / backend completion</b><span>Raw-payload log, trend plots, packet counter, link-quality view</span></div></div>
+<div class="rm reveal" style="--i:6"><span class="rm-n">6</span><div><b>LoRaWAN / ChirpStack</b><span>Migrate raw LoRa to a registered LoRaWAN uplink + decoder</span></div></div>
+<div class="rm reveal" style="--i:7"><span class="rm-n">7</span><div><b>Firmware alignment &amp; endurance</b><span>Align driver to AD7124 front-end · long-duration solar/battery test</span></div></div>
+</div>
+
+</section>
+<!-- ============ SLIDE 18 — CONCLUSION & Q&A ============ -->
+<section aria-label="Conclusion and Q&amp;A" class="slide slide--end" data-stage="all" data-time="45">
+<div class="end-wrap">
+<span class="eyebrow reveal" style="--i:0">Conclusion</span>
+<h2 class="reveal" style="--i:1">A complete, traceable, solar-powered<br/><span class="grad">telemetry chain — built end to end.</span></h2>
+<div class="end-points reveal" style="--i:2">
+<div class="ep"><span class="ep-ic ic-amber"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-bolt"></use></svg></span>Solar harvesting → BQ25798 power management → clean 3.3 V / 5 V rails</div>
+<div class="ep"><span class="ep-ic ic-cyan"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-chip"></use></svg></span>STM32 acquisition, RTD conversion &amp; readable UART telemetry frames</div>
+<div class="ep"><span class="ep-ic ic-violet"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-radio"></use></svg></span>868 MHz LoRa uplink verified at four independent checkpoints</div>
+</div>
+<div class="thanks reveal" style="--i:3">
+<span class="thanks-q">Thank you — questions welcome</span>
+<span class="thanks-ack">With thanks to Frédéric Martin, Lian-Corelli Apostol &amp; the CSUG team · Université Grenoble Alpes</span>
+</div>
+<div aria-hidden="true" class="title-chain end reveal" style="--i:4">
+<span class="tc tc--pwr">Solar</span><span class="tc-arr">→</span>
+<span class="tc tc--pwr">EPS</span><span class="tc-arr">→</span>
+<span class="tc tc--data">THC</span><span class="tc-arr">→</span>
+<span class="tc tc--data">STM32</span><span class="tc-arr">→</span>
+<span class="tc tc--rf">LoRa</span><span class="tc-arr">→</span>
+<span class="tc tc--rf">RX</span><span class="tc-arr">→</span>
+<span class="tc tc--gui">GUI</span>
+</div>
+</div>
+
+</section>
+</main>
+<!-- footer HUD -->
+<footer aria-hidden="true" class="hud">
+<div class="hud-left">
+<span class="hud-dot"></span>CSUG · LoRa Telemetry — EPS &amp; THC
+  </div>
+<div class="hud-chain" id="hudChain">
+<span class="hc" data-stage="1" title="Solar"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-sun"></use></svg></span>
+<span class="hc" data-stage="2" title="EPS"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-bolt"></use></svg></span>
+<span class="hc" data-stage="3" title="THC"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-thermo"></use></svg></span>
+<span class="hc" data-stage="4" title="STM32"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-chip"></use></svg></span>
+<span class="hc" data-stage="5" title="LoRa"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-radio"></use></svg></span>
+<span class="hc" data-stage="7" title="GUI"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-monitor"></use></svg></span>
+</div>
+<div class="hud-right">
+<span id="slideCounter">01 / 24</span>
+</div>
+</footer>
+<!-- nav arrows -->
+<button aria-label="Previous slide" class="nav-arrow prev" id="navPrev">‹</button>
+<button aria-label="Next slide" class="nav-arrow next" id="navNext">›</button>
+<div aria-hidden="true" aria-label="Enlarged diagram" class="img-lightbox" id="imgLightbox" role="dialog">
+<button aria-label="Close enlarged diagram" class="lb-close" id="lbClose">×</button>
+<div class="lb-panel">
+<div class="lb-title" id="lbTitle">Diagram</div>
+<img alt="Enlarged diagram" id="lbImg" src=""/>
+<div class="lb-hint">Click outside or press Esc to close</div>
+</div>
+</div>
 <!-- toolbar -->
 <div class="toolbar">
-  <button class="tb-btn" id="btnNotes" title="Speaker notes (N)">Notes</button>
-  <button class="tb-btn" id="btnTimer" title="Start/stop timer (T)"><span id="timerLabel">00:00</span></button>
-  <button class="tb-btn" id="btnGrid" title="Overview (O)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-layers"/></svg></button>
-  <button class="tb-btn" id="btnFull" title="Fullscreen (F)">⤢</button>
-</div>
 
-<!-- notes drawer -->
-<div class="notes-drawer" id="notesDrawer" aria-hidden="true">
-  <div class="nd-head">
-    <span class="nd-title">Speaker notes</span>
-    <span class="nd-meta"><span id="ndSlideNo">Slide 1</span> · target <span id="ndTime">0:30</span> · cumulative <span id="ndCume">0:30</span></span>
-    <button class="nd-close" id="ndClose" aria-label="Close notes">×</button>
-  </div>
-  <div class="nd-body" id="ndBody"></div>
+<button class="tb-btn" id="btnTimer" title="Start/stop timer (T)"><span id="timerLabel">00:00</span></button>
+<button class="tb-btn" id="btnGrid" title="Overview (O)"><svg aria-hidden="true" class="i" viewBox="0 0 24 24"><use href="#i-layers"></use></svg></button>
+<button class="tb-btn" id="btnFull" title="Fullscreen (F)">⤢</button>
 </div>
 
 <!-- overview grid -->
-<div class="overview" id="overview" aria-hidden="true">
-  <div class="ov-head">Overview — click a slide to jump · press O or Esc to close</div>
-  <div class="ov-grid" id="ovGrid"></div>
+<div aria-hidden="true" class="overview" id="overview">
+<div class="ov-head">Overview — click a slide to jump · press O or Esc to close</div>
+<div class="ov-grid" id="ovGrid"></div>
 </div>
-
 <!-- help hint -->
-<div class="help-hint" id="helpHint">
-  <b>← →</b> navigate &nbsp;·&nbsp; <b>N</b> notes &nbsp;·&nbsp; <b>O</b> overview &nbsp;·&nbsp; <b>T</b> timer &nbsp;·&nbsp; <b>F</b> fullscreen
-</div>
-
+<div class="help-hint" id="helpHint"><b>← →</b> navigate &nbsp;·&nbsp; <b>O</b> overview &nbsp;·&nbsp; <b>T</b> timer &nbsp;·&nbsp; <b>F</b> fullscreen</div>
 <script>
   /* Safety net: make the first slide visible immediately, even before script.js
      runs or if it fails to load. script.js then takes over normally. */
